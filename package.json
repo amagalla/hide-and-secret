@@ -1,0 +1,17 @@
+{
+  "name": "hide-and-secret",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"nodemon -L app/server/index.ts\" \"npm --prefix app/client run dev\"",
+    "build": "npm --prefix app/client run build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "concurrently": "^9.1.0",
+    "nodemon": "^3.1.7"
+  }
+}
