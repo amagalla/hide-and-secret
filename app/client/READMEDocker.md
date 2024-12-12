@@ -7,7 +7,7 @@ docker login (if not logged in)
 For Client
 
 ``` sh
-     docker build -t hide-and-secret-client . 
+     docker build -f Dockerfile.prod -t hide-and-secret-client .
      docker tag hide-and-secret-client amagalla24/hide-and-secret-client:latest
      docker push amagalla24/hide-and-secret-client:latest
 ```

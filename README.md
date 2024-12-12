@@ -24,3 +24,9 @@ Run the development environment locally:
 ```sh
     npm run build
 ```
+
+## Run application through docker-compose
+
+```sh
+    npm run serve
+```

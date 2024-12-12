@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "concurrently \"nodemon -L app/server/index.ts\" \"npm --prefix app/client run dev\"",
     "build": "npm --prefix app/client run build && npm --prefix app/server run build",
+    "serve": "npm i && docker-compose up",
     "delete-build": "rm -rf app/client/dist && rm -rf app/server/dist"
   },
   "keywords": [],
