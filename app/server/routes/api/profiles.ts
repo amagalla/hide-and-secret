@@ -1,5 +1,4 @@
 import express, { Request, Response, NextFunction } from 'express';
-import createError from 'http-errors';
 
 const router = express.Router();
 
