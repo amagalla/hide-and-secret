@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import runMigrations from './db/run-migrations';
+import { logger, loggerMiddleware } from './config/logger/winton';
 
 dotenv.config();
 
@@ -16,6 +17,8 @@ app.use(cors());
 
 runMigrations();
 
+app.use(loggerMiddleware);
+
 setupRoutes(app);
 
-app.listen(PORT, () => console.log(`Running on port ${PORT}`));
+app.listen(PORT, () => logger.info(`Running on port ${PORT}`));
