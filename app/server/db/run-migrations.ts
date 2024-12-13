@@ -1,5 +1,6 @@
 import knex from 'knex';
 import knexConfig from '../knexfile';
+import { logger } from '../config/logger/winton';
 
 async function runMigrations() {
   const environment = process.env.NODE_ENV || 'development';
@@ -8,9 +9,9 @@ async function runMigrations() {
 
   try {
     await db.migrate.latest();
-    console.info('Migrations are finished');
+    logger.info('Migrations are finished');
   } catch (error) {
-    console.error('Error running migrations:', error);
+    logger.error('Error running migrations:', error);
   }
 }
 
