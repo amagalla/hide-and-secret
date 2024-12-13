@@ -18,3 +18,14 @@ To test image
     docker ps
     docker stop <container_id>
 ```
+
+## Create Knex Migrations
+
+1. Be sure to be on server directory
+
+2. Replace file_name to custom table name then run command below
+
+```
+    npx knex migrate:make file_name -x ts
+
+```
