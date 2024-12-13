@@ -11,7 +11,8 @@
     "build": "npm --prefix app/client run build && npm --prefix app/server run build",
     "serve": "npm i && docker-compose up",
     "mysql": "docker exec -it mysql mysql -u hide -p",
-    "delete-build": "rm -rf app/client/dist && rm -rf app/server/dist"
+    "delete-build": "rm -rf app/client/dist && rm -rf app/server/dist",
+    "docker-rebuild": "docker system prune -af && docker-compose build --no-cache && docker-compose up"
   },
   "keywords": [],
   "author": "",
