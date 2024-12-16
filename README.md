@@ -24,3 +24,19 @@ Run the development environment locally:
 ```sh
     npm run build
 ```
+
+## Run application through docker-compose
+
+```sh
+    npm run serve
+```
+
+## Use MySQL Terminal
+
+1. Run the server
+
+2. Use password found in .env
+
+```
+    npm run mysql
+```

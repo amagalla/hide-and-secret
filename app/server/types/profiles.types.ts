@@ -1,0 +1,11 @@
+export type UserProfile = {
+    email: string;
+    username: string;
+    password: string;
+  }
+  
+export type RegisterUserResponse = {
+  status?: number;
+  success?: string;
+  error?: string;
+}
