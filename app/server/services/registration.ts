@@ -13,8 +13,8 @@ const registerUser = async (profile: UserProfile): Promise<RegisterUserResponse>
   try {
     let [result] = await db.query<ResultSetHeader>(registerQuery, [email, username, password]);
 
-    if (result.affectedRows) {
-      return { status: 400, error: 'Fails to register user' };
+    if (result.affectedRows === 0) {
+      return { status: 400, error: 'Failed to register user' };
     }
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -38,7 +38,7 @@ const registerUser = async (profile: UserProfile): Promise<RegisterUserResponse>
     return { status: 500, error: 'An error occurred while registering the user' };
   }
 
-  return { success: 'User registered successfully' };
+  return { success: true, message: 'User registered successfully' };
 };
 
 export { registerUser }
