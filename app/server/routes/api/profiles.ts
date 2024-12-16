@@ -1,15 +1,14 @@
 import express, { Request, Response, NextFunction } from 'express';
 import createError from 'http-errors';
 import { registerUser } from '../../services/registration';
+import { RegisterUserResponse } from '../../types/profiles.types';
  
 const router = express.Router();
 
 router.post(
     '/register',
     async (req: Request, res: Response, next: NextFunction) => {
-        let
-            resp,
-            error: Error | undefined;
+        let resp: RegisterUserResponse | undefined;
 
         try {
             resp = await registerUser(req.body);

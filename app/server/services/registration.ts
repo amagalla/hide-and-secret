@@ -1,5 +1,6 @@
 import db from '../db/mysql.config'
 import { RegisterUserResponse, UserProfile } from '../types/profiles.types';
+import { ResultSetHeader } from 'mysql2';
 
 const registerUser = async (profile: UserProfile): Promise<RegisterUserResponse> => {
   const { email, username, password } = profile;
@@ -10,9 +11,9 @@ const registerUser = async (profile: UserProfile): Promise<RegisterUserResponse>
         (?, ?, ?)`;
 
   try {
-    let [result] = await db.query(registerQuery, [email, username, password]);
+    let [result] = await db.query<ResultSetHeader>(registerQuery, [email, username, password]);
 
-    if ((result as any).affectedRows === 0) {
+    if (result.affectedRows) {
       return { status: 400, error: 'Fails to register user' };
     }
   } catch (err: unknown) {
