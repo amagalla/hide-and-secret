@@ -12,7 +12,7 @@ export async function up(knex: Knex): Promise<void> {
             created_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY (id),
             CONSTRAINT UQ_USERNAME UNIQUE (username),
-            CONSTRAINT CK_PASSWORD_LENGTH CHECK (CHAR_LENGTH(password) >= 8)
+            CONSTRAINT CK_PASSWORD_LENGTH CHECK (CHAR_LENGTH(password) BETWEEN 8 AND 64)
         );
     `);
 }
