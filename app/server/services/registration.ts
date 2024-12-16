@@ -13,7 +13,7 @@ const registerUser = async (profile: UserProfile): Promise<RegisterUserResponse>
     let [result] = await db.query(registerQuery, [email, username, password]);
 
     if ((result as any).affectedRows === 0) {
-      return { status: 400, error: 'Failes to register user' };
+      return { status: 400, error: 'Fails to register user' };
     }
   } catch (err: unknown) {
     if (err instanceof Error) {
