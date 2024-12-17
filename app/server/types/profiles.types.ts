@@ -6,6 +6,7 @@ export type UserProfile = {
   
 export type RegisterUserResponse = {
   status?: number;
+  statusCode?: number;
   success?: boolean;
   error?: string;
   message?: string;

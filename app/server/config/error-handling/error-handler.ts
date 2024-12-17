@@ -24,7 +24,9 @@ const errorHandler = (
   logger.error(`Status: ${status}, Message: ${message}`);
 
   res.status(status).json({
-    error: message,
+    success: false,
+    statusCode: status,
+    message,
   });
 };
 
