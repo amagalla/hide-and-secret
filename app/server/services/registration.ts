@@ -38,7 +38,10 @@ const registerUser = async (profile: UserProfile): Promise<RegisterUserResponse>
     return { status: 500, error: 'An error occurred while registering the user' };
   }
 
-  return { success: true, message: 'User registered successfully' };
+  return { 
+    success: true,
+    statusCode: 200,
+    message: 'User registered successfully' };
 };
 
 export { registerUser }
