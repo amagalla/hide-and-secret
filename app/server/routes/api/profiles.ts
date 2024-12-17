@@ -2,7 +2,8 @@ import express, { Request, Response, NextFunction } from 'express';
 import createError from 'http-errors';
 import { registerUser } from '../../services/registration';
 import { RegisterUserResponse } from '../../types/profiles.types';
-import hashPassword from '../../middleware/profiles/hashPassword';
+import hashPassword from '../../middleware/profiles/hash-password';
+import emailValidator from '../../middleware/profiles/email-validator';
  
 const router = express.Router();
 
@@ -50,6 +51,7 @@ const router = express.Router();
 
 router.post(
     '/register',
+    emailValidator,
     hashPassword,
     async (req: Request, res: Response, next: NextFunction) => {
         let resp: RegisterUserResponse | undefined;
