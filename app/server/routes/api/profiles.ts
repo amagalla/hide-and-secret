@@ -5,6 +5,48 @@ import { RegisterUserResponse } from '../../types/profiles.types';
  
 const router = express.Router();
 
+/**
+ * @swagger
+ *
+ * definitions:
+ *      RegisterUser:
+ *          type: object
+ *          description: User's information
+ *          properties:
+ *              email:
+ *                  type: string
+ *                  example: email@email.test
+ *              username:
+ *                  type: string
+ *                  example: amagalla
+ *              password:
+ *                  type: string
+ *                  example: abcd1234
+ */
+
+/**
+ * @swagger
+ *
+ *  /api/profiles/register:
+ *
+ *  post:
+ *      description: Register a new User
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: body
+ *            name: User to register
+ *            description: The user's information
+ *            required: true
+ *            schema:
+ *              $ref: '#/definitions/RegisterUser'
+ *      responses:
+ *          200:
+ *              description: User registered successfully
+ *          400:
+ *              description: Registration failed
+ */
+
 router.post(
     '/register',
     async (req: Request, res: Response, next: NextFunction) => {

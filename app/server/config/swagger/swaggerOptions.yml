@@ -1,0 +1,11 @@
+definition:
+  swagger: "2.0"
+  info:
+    title: 'Hide and Secret API'
+    version: 1.0.0
+    description: 'Hide and Secret API docs'
+  servers:
+    - url:
+        'http://localhost:3000'
+apis:
+  - './routes/api/*.ts'
