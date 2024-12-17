@@ -4,21 +4,19 @@ import bcrypt from 'bcryptjs';
 
 const saltRounds = 10;
 
-const hashPassword = async (req: Request, resp: Response, next: NextFunction) => {
+const hashPassword = async (req: Request, resp: Response, next: NextFunction): Promise<void> => {
   const { password } = req.body;
 
+  if (!password) {
+    next(createError(400, "Password is required"));
+  }
+
   try {
-    await bcrypt.hash(password, saltRounds, function (err, hash) {
-      if (err) {
-        next(createError('Error hashing password'));
-      }
-
-      req.body.password = hash;
-
-      next();
-    });
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    req.body.password = hashedPassword;
+    next();
   } catch (err) {
-    next(createError('Bcrypt failed'));
+    next(createError(500, 'Error hashing password'));
   }
 };
 
