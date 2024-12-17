@@ -11,6 +11,10 @@ const hashPassword = async (req: Request, resp: Response, next: NextFunction): P
     next(createError(400, "Password is required"));
   }
 
+  if (password.length < 8 || password.length > 64) {
+    next(createError(400, 'Password needs to be between 8 to 64 characters long'));
+  }
+
   try {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     req.body.password = hashedPassword;
