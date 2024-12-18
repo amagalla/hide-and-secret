@@ -29,8 +29,6 @@ const registerUser = async (email: string, username: string, password: string): 
       }
     }
 
-    console.log('inside catch!!!!')
-
     return { status: 500, error: 'An error occurred while registering the user' };
   }
 
