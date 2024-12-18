@@ -1,0 +1,53 @@
+services:
+  server:
+    build:
+      context: ./app/server
+      dockerfile: Dockerfile.dev
+    container_name: server
+    volumes:
+      - ./app/server:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    command: npm run dev
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - app
+  mysql:
+    image: mysql:9
+    container_name: mysql
+    env_file:
+      - .env
+    ports:
+      - "3306:3306"
+    networks:
+      - app
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "mysql", "-u", "root", "-ppassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+  test-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    container_name: server-test
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - TEST_PATH=tests/server/**/*.test.ts
+    command: npm run docker-test
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - app
+
+
+networks:
+  app:
+    driver: bridge

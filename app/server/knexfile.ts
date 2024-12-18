@@ -1,5 +1,8 @@
 import { Knex } from 'knex';
 import dotenv from 'dotenv';
+import path from 'path';
+
+const migrationsPath = path.resolve(__dirname, './db/knex/migrations');
 
 dotenv.config({ path: `.env` });
 
@@ -14,7 +17,7 @@ const knexConfig: { [key: string]: Knex.Config } = {
       database: process.env.DB_NAME,
     },
     migrations: {
-      directory: './db/knex/migrations',
+      directory: migrationsPath,
       extension: '.ts',
     },
   },
@@ -28,7 +31,7 @@ const knexConfig: { [key: string]: Knex.Config } = {
       database: process.env.DB_NAME,
     },
     migrations: {
-      directory: './dist/db/knex/migrations',
+      directory: migrationsPath,
       extension: '.js',
     },
   },

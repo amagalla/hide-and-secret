@@ -1,4 +1,5 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
+import path from 'path';
 import fs from 'fs';
 import yml from 'js-yaml';
 import bodyParser from 'body-parser';
@@ -17,7 +18,8 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const swaggerFile = fs.readFileSync('./config/swagger/swaggerOptions.yml', 'utf-8');
+const swaggerFilePath = path.resolve(__dirname, './config/swagger/swaggerOptions.yml');
+const swaggerFile = fs.readFileSync(swaggerFilePath, 'utf-8');
 const options: swaggerDoc.Options = yml.load(swaggerFile) as Options;
 const docs = swaggerDoc(options);
 
@@ -37,3 +39,5 @@ setupRoutes(app);
 app.use(errorHandler);
 
 app.listen(PORT, () => logger.info(`Running on port ${PORT}`));
+
+export default app;
