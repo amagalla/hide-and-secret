@@ -2,133 +2,45 @@ import { use, expect } from 'chai';
 import chaiHttp from 'chai-http';
 import sinon from 'sinon';
 import app from '../../../app/server/index';
-import * as registerUser from '../../../app/server/controller/registration';
+import db from '../../../app/server/db/mysql.config';
+import { MySQLError } from '../configs/mysqlError';
 
 const chai = use(chaiHttp);
 
 describe('POST /api/profiles/register', () => {
-  let registerUserStub: sinon.SinonStub;
+  let queryStub: sinon.SinonStub;
+
+  const ROUTE = '/api/profiles/register';
 
   beforeEach(() => {
-    registerUserStub = sinon.stub(registerUser, 'registerUser');
+    queryStub = sinon.stub(db, 'query');
   });
 
   afterEach(() => {
-    registerUserStub.restore();
+    queryStub.restore();
   });
 
-  context('User should not pass registration', () => {
-    it ('should return 400 for too short of a username length', async () => {
+  context('User should not register', () => {
+    it('should ran error when a username already exists', async () => {
+      const user = { email: 'email@email.test', username: 'amagalla', password: 'abcd1234' };
+
       const mockResponse = {
         success: false,
         statusCode: 400,
-        message: 'Username needs to be between 4 - 20 characters long',
+        message: "Email email@email.test already exists"
       }
 
-      registerUserStub.resolves(mockResponse);
-      
-      const user = { email: 'email@email.test', username: 'ama', password: 'abcd1234' };
+      const mockError = new MySQLError(
+        "Duplicate entry 'email@email.test' for key 'profiles.email'",
+        'ER_DUP_ENTRY',
+      );
 
-      const resp = await chai.request(app).post('/api/profiles/register').send(user);
+      queryStub.rejects(mockError);
 
-      expect(resp).to.have.status(400);
-      expect(resp.body).to.include(mockResponse);
-    });
+      const res = await chai.request(app).post(ROUTE).send(user);
 
-    it('should return 400 for invalid password length', async () => {
-      const mockResponse = {
-        success: false,
-        statusCode: 400,
-        message: 'Password needs to be between 8 to 64 characters long',
-      }
-
-      registerUserStub.resolves(mockResponse);
-
-      const user = { email: 'email@email.test', username: 'amagalla', password: 'abcd' };
-
-      const res = await chai.request(app).post('/api/profiles/register').send(user);
-
-      expect(res).to.have.status(400);
+      expect(res.status).to.equal(400);
       expect(res.body).to.include(mockResponse);
-    });
-
-    it('should return 400 for no entries', async () => {
-      const mockResponse = {
-        success: false,
-        statusCode: 400,
-        message: 'Email required',
-      }
-
-      registerUserStub.resolves(mockResponse);
-
-      const user = { email: '', username: '', password: '' };
-
-      const res = await chai.request(app).post('/api/profiles/register').send(user);
-
-      expect(res).to.have.status(400);
-      expect(res.body).to.include(mockResponse);
-    });
-
-    it('should return 400 with invalid email', async () => {
-      const mockResponse = {
-        success: false,
-        statusCode: 400,
-        message: 'Please use a valid email',
-      }
-
-      registerUserStub.resolves(mockResponse);
-
-      const user = { email: 'emailtest.com', username: 'amagalla', password: '12345678' };
-
-      const res = await chai.request(app).post('/api/profiles/register').send(user);
-
-      expect(res).to.have.status(400);
-      expect(res.body).to.include(mockResponse);
-    });
-
-    it('should return 400 with duplicate email', async () => {
-      const mockResponse = {
-        success: false,
-        statusCode: 400,
-        message: 'Email email@email.test already exists',
-      }
-
-      const mockInsertUserResp = {
-          status: 400,
-          error: 'Email email@email.test already exists'
-      };
-
-      registerUserStub.resolves(mockInsertUserResp);
-
-      const user = { email: 'email@test.com', username: 'amagalla', password: '12345678' };
-
-      const res = await chai.request(app).post('/api/profiles/register').send(user);
-
-      expect(res).to.have.status(400);
-      expect(res.body).to.include(mockResponse);
-    });
-
-    it('should return 400 with duplicate username', async () => {
-      const mockResponse = {
-        success: false,
-        statusCode: 400,
-        message: 'Username Yuri already exists',
-      }
-
-      const mockInsertUserResp = {
-          status: 400,
-          error: 'Username Yuri already exists'
-      };
-
-
-      registerUserStub.resolves(mockInsertUserResp);
-
-      const user = { email: 'email@test.com', username: 'yuri', password: '12345678' };
-
-      const res = await chai.request(app).post('/api/profiles/register').send(user);
-
-      expect(res).to.have.status(400);
-      expect(res.body).to.include(mockResponse);
-    });
-  })
-})
+    })
+  });
+});

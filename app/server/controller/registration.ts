@@ -8,6 +8,7 @@ const registerUser = async (email: string, username: string, password: string): 
         VALUES 
         (?, ?, ?)`;
 
+
   try {
     let [result] = await db.query<ResultSetHeader>(registerQuery, [email, username, password]);
 
@@ -15,6 +16,7 @@ const registerUser = async (email: string, username: string, password: string): 
       return { status: 400, error: 'Failed to register user' };
     }
   } catch (err: unknown) {
+
     if (err instanceof Error) {
       const mysqlError = err as { code?: string; sqlMessage?: string };
 
