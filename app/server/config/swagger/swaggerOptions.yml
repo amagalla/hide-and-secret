@@ -5,7 +5,6 @@ definition:
     version: 1.0.0
     description: 'Hide and Secret API docs'
   servers:
-    - url:
-        'http://localhost:3000'
+    - url: "{{BASE_URL}}"
 apis:
   - './routes/api/*.ts'
