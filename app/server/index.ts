@@ -16,11 +16,24 @@ import authenticate from './middleware/swagger/authenticate';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const { BASE_URL } = process.env;
+const { PORT } = process.env || 3000;
 
 const swaggerFilePath = path.resolve(__dirname, './config/swagger/swaggerOptions.yml');
 const swaggerFile = fs.readFileSync(swaggerFilePath, 'utf-8');
 const options: swaggerDoc.Options = yml.load(swaggerFile) as Options;
+
+const { definition }  = options;
+
+if (definition?.servers && Array.isArray(definition.servers)) {
+    definition.servers = definition.servers.map(server => {
+        if (typeof server.url === 'string') {
+            server.url = server.url.replace("{{BASE_URL}}", `${BASE_URL}${PORT}`);
+        }
+        return server;
+    });
+}
+
 const docs = swaggerDoc(options);
 
 
