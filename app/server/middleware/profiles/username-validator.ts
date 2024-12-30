@@ -5,7 +5,7 @@ const checkRegReq = (req: Request, resp: Response, next: NextFunction) => {
   const { username } = req.body;
 
   if (!username) {
-    next(createError(400, "Username is required"));
+    return next(createError(400, "Username is required"));
   }
 
   if ((username && username.length < 4) || username.length > 20) {

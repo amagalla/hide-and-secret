@@ -37,7 +37,8 @@ const registerUser = async (email: string, username: string, password: string): 
   return { 
     success: true,
     statusCode: 200,
-    message: 'User registered successfully' };
+    message: 'User registered successfully'
+  };
 };
 
 export { registerUser }

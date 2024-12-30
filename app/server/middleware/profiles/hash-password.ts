@@ -8,11 +8,11 @@ const hashPassword = async (req: Request, resp: Response, next: NextFunction): P
   const { password } = req.body;
 
   if (!password) {
-    next(createError(400, "Password is required"));
+    return next(createError(400, "Password is required"));
   }
 
   if (password.length < 8 || password.length > 64) {
-    next(createError(400, 'Password needs to be between 8 to 64 characters long'));
+    return next(createError(400, 'Password needs to be between 8 to 64 characters long'));
   }
 
   try {
@@ -20,7 +20,7 @@ const hashPassword = async (req: Request, resp: Response, next: NextFunction): P
     req.body.password = hashedPassword;
     next();
   } catch (err) {
-    next(createError(500, 'Error hashing password'));
+    return next(createError(500, 'Error hashing password'));
   }
 };
 
