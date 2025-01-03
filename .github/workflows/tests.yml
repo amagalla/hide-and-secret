@@ -3,7 +3,10 @@ name: Tests
 on:
   push:
     branches:
-      - '**'
+      - 'develop'
+      - 'feat/*'
+      - 'test/*'
+      - 'refact/*'
 
 jobs:
   test:
@@ -26,5 +29,16 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Run tests
+    - name: Run tests with development environment variables
+      env:
+        DB_HOST: ${{ secrets.DB_HOST_DEV }}
+        DB_PORT: ${{ secrets.DB_PORT_DEV }}
+        DB_USER: ${{ secrets.DB_USER_DEV }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD_DEV }}
+        DB_NAME: ${{ secrets.DB_NAME_DEV }}
+        TEST_PATH: ${{ secrets.TEST_PATH_DEV }}
+        MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD_DEV }}
+        MYSQL_DATABASE: ${{ secrets.DB_NAME_DEV }}
+        MYSQL_USER: ${{ secrets.DB_USER_DEV }}
+        MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD_DEV }}
       run: npm test
