@@ -8,12 +8,12 @@ services:
       - .:/app
       - /app/node_modules
     environment:
-      DB_HOST: mysql
-      DB_PORT: 3306
-      DB_USER: hide
-      DB_PASSWORD: secret
-      DB_NAME: hideandsecret
-      TEST_PATH: ${TEST_PATH:-tests/**/*.test.ts}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      TEST_PATH: ${TEST_PATH}
     command: npm run docker-test $TEST_PATH
     depends_on:
       mysql:
@@ -24,10 +24,10 @@ services:
     image: mysql:9
     container_name: mysql
     environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: hideandsecret
-      MYSQL_USER: hide
-      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     ports:
       - "3306:3306"
     networks:
