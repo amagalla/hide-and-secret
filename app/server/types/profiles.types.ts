@@ -11,3 +11,12 @@ export type RegisterUserResponse = {
   error?: string;
   message?: string;
 }
+
+export type LoginUserResponse = {
+  status?: number;
+  statusCode?: number;
+  success?: boolean;
+  error?: string;
+  message?: string;
+  token?: string
+}

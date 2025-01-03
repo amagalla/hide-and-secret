@@ -9,3 +9,6 @@ RUN npm install --only=development
 RUN npm install -g npm@latest
 
 COPY . .
+
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.8.0/wait /wait
+RUN chmod +x /wait

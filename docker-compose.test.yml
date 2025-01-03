@@ -8,5 +8,37 @@ services:
       - .:/app
       - /app/node_modules
     environment:
-      - TEST_PATH=tests/server/**/*.test.ts
-    command: npm run docker-test
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: hide
+      DB_PASSWORD: secret
+      DB_NAME: hideandsecret
+      TEST_PATH: ${TEST_PATH:-tests/**/*.test.ts}
+    command: npm run docker-test $TEST_PATH
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - app
+  mysql:
+    image: mysql:9
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: hideandsecret
+      MYSQL_USER: hide
+      MYSQL_PASSWORD: secret
+    ports:
+      - "3306:3306"
+    networks:
+      - app
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "mysql", "-u", "root", "-ppassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+networks:
+  app:
+    driver: bridge
