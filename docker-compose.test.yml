@@ -7,6 +7,30 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
-    environment:
-      - TEST_PATH=tests/server/**/*.test.ts
-    command: npm run docker-test
+    env_file:
+      - .env
+    command: npm run docker-test $TEST_PATH
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - app
+  mysql:
+    image: mysql:9
+    container_name: mysql
+    env_file:
+      - .env
+    ports:
+      - "3306:3306"
+    networks:
+      - app
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "mysql", "-u", "root", "-ppassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+networks:
+  app:
+    driver: bridge

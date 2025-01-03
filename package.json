@@ -11,7 +11,7 @@
     "build": "npm --prefix app/client run build && npm --prefix app/server run build",
     "serve": "npm i && docker-compose up",
     "mysql": "docker exec -it mysql mysql -u hide -p",
-    "docker-test": "mocha --require ts-node/register $TEST_PATH --exit",
+    "docker-test": "mocha --require ts-node/register ${TEST_PATH} --exit",
     "test": "npm i && docker-compose -f docker-compose.test.yml run --rm test-server",
     "delete-build": "rm -rf app/client/dist && rm -rf app/server/dist",
     "docker-rebuild": "docker system prune -af && docker-compose build --no-cache && docker-compose up"
