@@ -7,8 +7,13 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
-    env_file:
-      - .env
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: hide
+      DB_PASSWORD: secret
+      DB_NAME: hideandsecret
+      TEST_PATH: ${TEST_PATH:-tests/**/*.test.ts}
     command: npm run docker-test $TEST_PATH
     depends_on:
       mysql:
@@ -18,8 +23,11 @@ services:
   mysql:
     image: mysql:9
     container_name: mysql
-    env_file:
-      - .env
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: hideandsecret
+      MYSQL_USER: hide
+      MYSQL_PASSWORD: secret
     ports:
       - "3306:3306"
     networks:
