@@ -9,6 +9,7 @@ export async function up(knex: Knex): Promise<void> {
             google_email        VARCHAR(255) DEFAULT NULL UNIQUE,
             username            VARCHAR(255) DEFAULT NULL UNIQUE,
             password            VARCHAR(255) DEFAULT NULL,
+            has_username        BOOLEAN DEFAULT FALSE,
             created_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY (id),
             CONSTRAINT UQ_USERNAME UNIQUE (username),

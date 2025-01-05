@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import createError from 'http-errors';
-import { registerUser, loginUser } from '../../controller/profiles';
-import { RegisterUserResponse, LoginUserResponse } from '../../types/profiles.types';
+import { registerUser, loginUser, registerUsername } from '../../controller/profiles';
+import { RegisterUserResponse, LogUserResponse } from '../../types/profiles.types';
 import hashPassword from '../../middleware/profiles/hash-password';
 import emailValidator from '../../middleware/profiles/email-validator';
 import usernameValidator from '../../middleware/profiles/username-validator';
@@ -19,9 +19,6 @@ const router = express.Router();
  *              email:
  *                  type: string
  *                  example: email@email.test
- *              username:
- *                  type: string
- *                  example: amagalla
  *              password:
  *                  type: string
  *                  example: abcd1234
@@ -35,6 +32,16 @@ const router = express.Router();
  *              password:
  *                  type: string
  *                  example: abcd1234
+  *      RegisterUsername:
+ *          type: object
+ *          description: Username to be registered
+ *          properties:
+ *              id:
+ *                  type: string
+ *                  example: 1
+ *              username:
+ *                  type: string
+ *                  example: yuri
  */
 
 /**
@@ -63,15 +70,14 @@ const router = express.Router();
 router.post(
     '/register',
     emailValidator,
-    usernameValidator,
     hashPassword,
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         let resp: RegisterUserResponse;
 
-        const { email, username, password } = req.body;
+        const { email, password } = req.body;
 
         try {
-            resp = await registerUser(email, username, password);
+            resp = await registerUser(email, password);
             
             if (resp && resp.error) {
                 const status = resp.status || 500;
@@ -114,7 +120,7 @@ router.post(
     '/login',
     emailValidator,
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        let resp: LoginUserResponse | undefined;
+        let resp: LogUserResponse;
 
         const { email, password } = req.body;
 
@@ -139,5 +145,54 @@ router.post(
 
     }
 );
+
+/**
+ * @swagger
+ *
+ *  /api/profiles/register/username:
+ *
+ *  post:
+ *      description: Register a username
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: body
+ *            name: username
+ *            description: Username to be registered
+ *            required: true
+ *            schema:
+ *              $ref: '#/definitions/RegisterUsername'
+ *      responses:
+ *          200:
+ *            description: Username updated successfully
+ *          400:
+ *            description: Username update failed
+ *
+ */
+
+router.post(
+    '/register/username',
+    usernameValidator,
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        let resp: RegisterUserResponse;
+
+        const { id, username } = req.body;
+        
+        try {
+            resp = await registerUsername(id, username);
+            
+            if (resp && resp.error) {
+                const status = resp.status || 500;
+                return next(createError(status, `${resp.error}`));
+            }
+
+            res.status(200).send(resp);
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                return next(createError(`${err.message}` || 'An error has occured'));
+            }
+        }
+    }
+)
 
 export default router;
