@@ -21,7 +21,7 @@ const registerUser = async (email: string, password: string): Promise<RegisterUs
       return { status: 400, error: 'Failed to register user' };
     }
 
-    return { 
+    return {
       success: true,
       statusCode: 200,
       message: 'User registered successfully',
@@ -36,7 +36,7 @@ const registerUser = async (email: string, password: string): Promise<RegisterUs
         if (mysqlError.code === 'ER_DUP_ENTRY') {
           if (mysqlError.sqlMessage.includes('profiles.email')) {
             return { status: 400, error: `Email ${email} already exists` };
-          } 
+          }
         }
       }
     }
@@ -45,7 +45,7 @@ const registerUser = async (email: string, password: string): Promise<RegisterUs
 };
 
 const loginUser = async (email: string, password: string): Promise<LogUserResponse> => {
-  const loginQuery = `SELECT id, email, username, password FROM profiles WHERE email = ?`;
+  const loginQuery = `SELECT id, email, username, password, has_username FROM profiles WHERE email = ?`;
 
   try {
     let [result] = await db.query<RowDataPacket[]>(loginQuery, email);
@@ -59,7 +59,16 @@ const loginUser = async (email: string, password: string): Promise<LogUserRespon
     }
 
     if (!result[0].username) {
-      return { status: 400, error: 'Username not set. Please complete registration' };
+      return {
+        success: true,
+        statusCode: 200,
+        has_username: result[0].has_username,
+        message: 'Tranfer user to username page',
+        user: {
+          id: result[0].id,
+          email: result[0].email,
+        }
+      };
     }
 
     const token = jwt.sign(
@@ -67,9 +76,10 @@ const loginUser = async (email: string, password: string): Promise<LogUserRespon
       process.env.JWT_SECRET as string,
     );
 
-    return { 
+    return {
       success: true,
       statusCode: 200,
+      has_username: result[0].has_username,
       message: 'User logged in successfully',
       token,
       user: {
@@ -92,18 +102,18 @@ const registerUsername = async (id: string, username: string): Promise<LogUserRe
   const checkValidUsername = 'SELECT id FROM profiles WHERE username = ?';
   const updateQuery = 'UPDATE profiles SET username = ?, has_username = TRUE WHERE id = ?';
   const getProfile = 'SELECT id, email, google_id, google_email, username FROM profiles WHERE id = ?';
-  
+
   try {
     const [checkUser] = await db.query<RowDataPacket[]>(checkValidUsername, username);
 
     if (checkUser.length > 0) {
-      return { status: 400, error: `Username ${username} already in use. Please choose another`};
+      return { status: 400, error: `Username ${username} already in use. Please choose another` };
     };
 
     const [updatedUsername] = await db.query<ResultSetHeader>(updateQuery, [username, id]);
 
     if (updatedUsername.affectedRows === 0) {
-      return { status: 400, error: `User ${username} not found`};
+      return { status: 400, error: `User ${username} not found` };
     }
 
     const [result] = await db.query<RowDataPacket[]>(getProfile, [id]);
@@ -113,7 +123,7 @@ const registerUsername = async (id: string, username: string): Promise<LogUserRe
       process.env.JWT_SECRET as string,
     );
 
-    return { 
+    return {
       success: true,
       statusCode: 200,
       message: 'Username updated successfully',
@@ -124,7 +134,7 @@ const registerUsername = async (id: string, username: string): Promise<LogUserRe
         username: result[0].username
       }
     };
-  } catch(err: unknown) {
+  } catch (err: unknown) {
     if (err instanceof Error) {
       return { status: 500, error: 'Unexpected error occured when updating username' };
     }

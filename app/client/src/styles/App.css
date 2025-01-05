@@ -1,8 +1,18 @@
-body {
+
+*,
+*::before,
+*::after {
   margin: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  font-family: Arial, sans-serif;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: sans-serif;
+}
+
+body {
+  line-height: 1.5;
+  background-color: #fff;
 }
