@@ -91,6 +91,34 @@ describe(`POST ${ROUTE}`, () => {
             expect(resp.status).to.equal(400);
             expect(resp.body).to.include(mockResponse);
         });
+        
+        it ('should not pass with no username', async () => {
+            const user = { email: 'email@email.test', username: null, password: 'abcd1234', has_username: 0 };
+
+            const mockResponse = {
+                success: false,
+                statusCode: 400,
+                message: `Username not set. Please complete registration`
+            };
+
+            const mockQueryResult = [
+                [{
+                    id: 1,
+                    email: 'email@email.test',
+                    username: null,
+                    password: 'hashedPassword',
+                    has_username: 0
+                }]
+            ];
+
+            queryStub.resolves(mockQueryResult);
+            bcryptCompareStub.resolves(true);
+
+            const resp = await chai.request(app).post(ROUTE).send(user);
+
+            expect(resp.status).to.equal(400);
+            expect(resp.body).to.include(mockResponse);
+        });
     });
 
     context('should login user successfully', () => {
@@ -101,7 +129,12 @@ describe(`POST ${ROUTE}`, () => {
                 success: true,
                 statusCode: 200,
                 message: `User logged in successfully`,
-                token: mockToken
+                token: mockToken,
+                user: {
+                    id: 1,
+                    email: 'email@email.test',
+                    username: 'amagalla'
+                  }
             };
 
             const mockQueryResult = [
@@ -120,7 +153,7 @@ describe(`POST ${ROUTE}`, () => {
             const resp = await chai.request(app).post(ROUTE).send(user);
 
             expect(resp.status).to.equal(200);
-            expect(resp.body).to.include(mockResponse);
+            expect(resp.body).to.deep.include(mockResponse);
             
         });
     });
