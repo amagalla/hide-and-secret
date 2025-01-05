@@ -1,5 +1,5 @@
 import db from '../db/mysql.config'
-import { RegisterUserResponse, LoginUserResponse } from '../types/profiles.types';
+import { RegisterUserResponse, LogUserResponse } from '../types/profiles.types';
 import { ResultSetHeader, RowDataPacket } from 'mysql2';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -7,19 +7,26 @@ import env from 'dotenv';
 
 env.config();
 
-const registerUser = async (email: string, username: string, password: string): Promise<RegisterUserResponse> => {
+const registerUser = async (email: string, password: string): Promise<RegisterUserResponse> => {
   const registerQuery = `INSERT INTO profiles 
-        (email, username, password)
+        (email, password)
         VALUES 
-        (?, ?, ?)`;
+        (?, ?)`;
 
 
   try {
-    let [result] = await db.query<ResultSetHeader>(registerQuery, [email, username, password]);
+    let [result] = await db.query<ResultSetHeader>(registerQuery, [email, password]);
 
     if (result.affectedRows === 0) {
       return { status: 400, error: 'Failed to register user' };
     }
+
+    return { 
+      success: true,
+      statusCode: 200,
+      message: 'User registered successfully',
+      id: result.insertId
+    };
   } catch (err: unknown) {
 
     if (err instanceof Error) {
@@ -29,24 +36,15 @@ const registerUser = async (email: string, username: string, password: string): 
         if (mysqlError.code === 'ER_DUP_ENTRY') {
           if (mysqlError.sqlMessage.includes('profiles.email')) {
             return { status: 400, error: `Email ${email} already exists` };
-          } else if (mysqlError.sqlMessage.includes('profiles.username')) {
-            return { status: 400, error: `Username ${username} already exists` };
-          }
+          } 
         }
       }
     }
-
     return { status: 500, error: 'An error occurred while registering the user' };
   }
-
-  return { 
-    success: true,
-    statusCode: 200,
-    message: 'User registered successfully'
-  };
 };
 
-const loginUser = async (email: string, password: string): Promise<LoginUserResponse> => {
+const loginUser = async (email: string, password: string): Promise<LogUserResponse> => {
   const loginQuery = `SELECT id, email, username, password FROM profiles WHERE email = ?`;
 
   try {
@@ -60,6 +58,10 @@ const loginUser = async (email: string, password: string): Promise<LoginUserResp
       return { status: 400, error: 'Password does not match with email' };
     }
 
+    if (!result[0].username) {
+      return { status: 400, error: 'Username not set. Please complete registration' };
+    }
+
     const token = jwt.sign(
       { id: result[0].id, email: result[0].email, username: result[0].username },
       process.env.JWT_SECRET as string,
@@ -70,6 +72,11 @@ const loginUser = async (email: string, password: string): Promise<LoginUserResp
       statusCode: 200,
       message: 'User logged in successfully',
       token,
+      user: {
+        id: result[0].id,
+        email: result[0].email,
+        username: result[0].username
+      }
     };
 
   } catch (err: unknown) {
@@ -81,7 +88,53 @@ const loginUser = async (email: string, password: string): Promise<LoginUserResp
   return { status: 500, error: 'Unexpected error occurred' };
 }
 
+const registerUsername = async (id: string, username: string): Promise<LogUserResponse> => {
+  const checkValidUsername = 'SELECT id FROM profiles WHERE username = ?';
+  const updateQuery = 'UPDATE profiles SET username = ?, has_username = TRUE WHERE id = ?';
+  const getProfile = 'SELECT id, email, google_id, google_email, username FROM profiles WHERE id = ?';
+  
+  try {
+    const [checkUser] = await db.query<RowDataPacket[]>(checkValidUsername, username);
+
+    if (checkUser.length > 0) {
+      return { status: 400, error: `Username ${username} already in use. Please choose another`};
+    };
+
+    const [updatedUsername] = await db.query<ResultSetHeader>(updateQuery, [username, id]);
+
+    if (updatedUsername.affectedRows === 0) {
+      return { status: 400, error: `User ${username} not found`};
+    }
+
+    const [result] = await db.query<RowDataPacket[]>(getProfile, [id]);
+
+    const token = jwt.sign(
+      { id: result[0].id, email: result[0].email, username: result[0].username },
+      process.env.JWT_SECRET as string,
+    );
+
+    return { 
+      success: true,
+      statusCode: 200,
+      message: 'Username updated successfully',
+      token,
+      user: {
+        id: result[0].id,
+        email: result[0].email,
+        username: result[0].username
+      }
+    };
+  } catch(err: unknown) {
+    if (err instanceof Error) {
+      return { status: 500, error: 'Unexpected error occured when updating username' };
+    }
+  }
+
+  return { status: 500, error: 'Unexpected error occurred' };
+}
+
 export {
   registerUser,
-  loginUser
+  loginUser,
+  registerUsername
 }

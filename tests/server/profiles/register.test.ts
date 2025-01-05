@@ -22,7 +22,7 @@ describe('POST /api/profiles/register', () => {
 
   context('User should not register', () => {
     it('should error when email is not entered', async () => {
-      const user = { email: '', username: 'amagalla', password: 'abcd1234' };
+      const user = { email: '', password: 'abcd1234' };
 
       const mockResponse = {
         success: false,
@@ -38,7 +38,7 @@ describe('POST /api/profiles/register', () => {
     });
     
     it('should error when email is not valid', async () => {
-      const user = { email: 'email.test', username: 'amagalla', password: 'abcd1234' };
+      const user = { email: 'email.test', password: 'abcd1234' };
 
       const mockResponse = {
         success: false,
@@ -52,68 +52,8 @@ describe('POST /api/profiles/register', () => {
       expect(resp.body).to.include(mockResponse);
     });
     
-    it('should error when username is not entered', async () => {
-      const user = { email: 'email@email.test', username: '', password: 'abcd1234' };
-
-      const mockResponse = {
-        success: false,
-        statusCode: 400,
-        message: 'Username is required'
-      };
-      
-      const resp = await chai.request(app).post(ROUTE).send(user);
-
-      expect(resp.status).to.equal(400);
-      expect(resp.body).to.include(mockResponse);
-    });
-    
-    it('should error when username is too short', async () => {
-      const user = { email: 'email@email.test', username: 'am', password: 'abcd1234' };
-
-      const mockResponse = {
-        success: false,
-        statusCode: 400,
-        message: 'Username needs to be between 4 - 20 characters long'
-      };
-      
-      const resp = await chai.request(app).post(ROUTE).send(user);
-
-      expect(resp.status).to.equal(400);
-      expect(resp.body).to.include(mockResponse);
-    });
-    
-    it('should error when username is too long', async () => {
-      const user = { email: 'email@email.test', username: 'aaaaaaaaaammmmmmmmmmz', password: 'abcd1234' };
-
-      const mockResponse = {
-        success: false,
-        statusCode: 400,
-        message: 'Username needs to be between 4 - 20 characters long'
-      };
-      
-      const resp = await chai.request(app).post(ROUTE).send(user);
-
-      expect(resp.status).to.equal(400);
-      expect(resp.body).to.include(mockResponse);
-    });
-    
-    it('should error when username is too long', async () => {
-      const user = { email: 'email@email.test', username: 'aaaaaaaaaammmmmmmmmmz', password: 'abcd1234' };
-
-      const mockResponse = {
-        success: false,
-        statusCode: 400,
-        message: 'Username needs to be between 4 - 20 characters long'
-      };
-      
-      const resp = await chai.request(app).post(ROUTE).send(user);
-
-      expect(resp.status).to.equal(400);
-      expect(resp.body).to.include(mockResponse);
-    });
-    
     it('should error when password is not entered', async () => {
-      const user = { email: 'email@email.test', username: 'amagalla', password: '' };
+      const user = { email: 'email@email.test', password: '' };
 
       const mockResponse = {
         success: false,
@@ -128,7 +68,7 @@ describe('POST /api/profiles/register', () => {
     });
     
     it('should error when password is too short', async () => {
-      const user = { email: 'email@email.test', username: 'amagalla', password: 'abcs123' };
+      const user = { email: 'email@email.test', password: 'abcs123' };
 
       const mockResponse = {
         success: false,
@@ -143,7 +83,7 @@ describe('POST /api/profiles/register', () => {
     });
     
     it('should error when password is too long', async () => {
-      const user = { email: 'email@email.test', username: 'amagalla', password: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' };
+      const user = { email: 'email@email.test', password: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' };
 
       const mockResponse = {
         success: false,
@@ -158,7 +98,7 @@ describe('POST /api/profiles/register', () => {
     });
 
     it('should error when an email already exists', async () => {
-      const user = { email: 'email@email.test', username: 'amagalla', password: 'abcd1234' };
+      const user = { email: 'email@email.test', password: 'abcd1234' };
 
       const mockResponse = {
         success: false,
@@ -178,38 +118,17 @@ describe('POST /api/profiles/register', () => {
       expect(resp.status).to.equal(400);
       expect(resp.body).to.include(mockResponse);
     })
-    
-    it('should error when a username already exists', async () => {
-      const user = { email: 'email@email.test', username: 'amagalla', password: 'abcd1234' };
-
-      const mockResponse = {
-        success: false,
-        statusCode: 400,
-        message: "Username amagalla already exists"
-      }
-
-      const mockError = new MySQLError(
-        "Duplicate entry 'amagalla' for key 'profiles.username'",
-        'ER_DUP_ENTRY',
-      );
-
-      queryStub.rejects(mockError);
-
-      const resp = await chai.request(app).post(ROUTE).send(user);
-
-      expect(resp.status).to.equal(400);
-      expect(resp.body).to.include(mockResponse);
-    })
   });
 
   context('User should register', () => {
     it('user should register successfully', async () => {
-      const user = { email: 'email@email.test', username: 'amagalla', password: 'abcd1234' };
+      const user = { email: 'email@email.test', password: 'abcd1234' };
 
       const mockResponse = {
         success: true,
         statusCode: 200,
-        message: 'User registered successfully'
+        message: 'User registered successfully',
+        id: 6
       };
 
       const mockQueryResult = {
