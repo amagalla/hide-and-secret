@@ -91,15 +91,22 @@ describe(`POST ${ROUTE}`, () => {
             expect(resp.status).to.equal(400);
             expect(resp.body).to.include(mockResponse);
         });
-        
-        it ('should not pass with no username', async () => {
+    });
+
+    context('should login user successfully', () => {
+        it ('should pass with no username', async () => {
             const user = { email: 'email@email.test', username: null, password: 'abcd1234', has_username: 0 };
 
             const mockResponse = {
-                success: false,
-                statusCode: 400,
-                message: `Username not set. Please complete registration`
-            };
+                success: true,
+                statusCode: 200,
+                has_username: 0,
+                message: 'Tranfer user to username page',
+                user: {
+                  id: 1,
+                  email: user.email,
+                }
+              };
 
             const mockQueryResult = [
                 [{
@@ -116,12 +123,10 @@ describe(`POST ${ROUTE}`, () => {
 
             const resp = await chai.request(app).post(ROUTE).send(user);
 
-            expect(resp.status).to.equal(400);
-            expect(resp.body).to.include(mockResponse);
+            expect(resp.status).to.equal(200);
+            expect(resp.body).to.deep.include(mockResponse);
         });
-    });
 
-    context('should login user successfully', () => {
         it('should pass', async () => {
             const user = { email: 'email@email.test', username: 'amagalla', password: 'abcd1234' };
 

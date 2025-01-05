@@ -10,6 +10,7 @@ export type RegisterUserResponse = {
 export type LogUserResponse = {
   status?: number;
   statusCode?: number;
+  has_username?: boolean;
   success?: boolean;
   error?: string;
   message?: string;
