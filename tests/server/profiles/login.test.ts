@@ -147,7 +147,8 @@ describe(`POST ${ROUTE}`, () => {
                     id: 1,
                     email: 'email@email.test',
                     username: 'amagalla',
-                    password: 'hashedPassword'
+                    password: 'hashedPassword',
+                    has_username: 1
                 }]
             ];
 
