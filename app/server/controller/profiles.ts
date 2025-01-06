@@ -58,7 +58,7 @@ const loginUser = async (email: string, password: string): Promise<LogUserRespon
       return { status: 400, error: 'Password does not match with email' };
     }
 
-    if (!result[0].username) {
+    if (!result[0].has_username) {
       return {
         success: true,
         statusCode: 200,
