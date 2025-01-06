@@ -7,14 +7,14 @@ import jwt from 'jsonwebtoken';
 
 const chai = use(chaiHttp);
 
-const ROUTE = '/api/profiles/register/username';
-
-describe(`POST ${ROUTE}`, () => {
+describe(`POST /api/profiles/:id/username`, () => {
     let
         queryStub: sinon.SinonStub,
         jwtSignStub: sinon.SinonStub;
 
-    const mockToken = '$2b$10$somehashedpasswordvalue';
+    const
+        id = 1,
+        mockToken = '$2b$10$somehashedpasswordvalue';
 
     beforeEach(() => {
         queryStub = sinon.stub(db, 'query');
@@ -28,7 +28,7 @@ describe(`POST ${ROUTE}`, () => {
 
     context('should not register username', () => {
         it('should fail for no username input', async () => {
-            const user = { id: 1, username: '' };
+            const user = { username: '' };
 
             const mockResponse = {
                 success: false,
@@ -36,14 +36,14 @@ describe(`POST ${ROUTE}`, () => {
                 message: 'Username is required'
             }
 
-            const resp = await chai.request(app).post(ROUTE).send(user);
+            const resp = await chai.request(app).patch(`/api/profiles/${id}/username`).send(user);
 
             expect(resp.status).to.equal(400);
             expect(resp.body).to.include(mockResponse);
         });
         
         it('should fail for short username', async () => {
-            const user = { id: 1, username: 'abc' };
+            const user = { username: 'abc' };
 
             const mockResponse = {
                 success: false,
@@ -51,14 +51,14 @@ describe(`POST ${ROUTE}`, () => {
                 message: 'Username needs to be between 4 - 20 characters long'
             }
 
-            const resp = await chai.request(app).post(ROUTE).send(user);
+            const resp = await chai.request(app).patch(`/api/profiles/${id}/username`).send(user);
 
             expect(resp.status).to.equal(400);
             expect(resp.body).to.include(mockResponse);
         });
         
         it('should fail for long username', async () => {
-            const user = { id: 1, username: 'abcdefabcdefabcdefabcdefa' };
+            const user = { username: 'abcdefabcdefabcdefabcdefa' };
 
             const mockResponse = {
                 success: false,
@@ -66,14 +66,14 @@ describe(`POST ${ROUTE}`, () => {
                 message: 'Username needs to be between 4 - 20 characters long'
             }
 
-            const resp = await chai.request(app).post(ROUTE).send(user);
+            const resp = await chai.request(app).patch(`/api/profiles/${id}/username`).send(user);
 
             expect(resp.status).to.equal(400);
             expect(resp.body).to.include(mockResponse);
         });
         
         it('should fail for username already in use', async () => {
-            const user = { id: 1, username: 'amagalla' };
+            const user = { username: 'amagalla' };
 
             const mockResponse = {
                 success: false,
@@ -89,14 +89,14 @@ describe(`POST ${ROUTE}`, () => {
 
             queryStub.resolves(mockQueryResult);
 
-            const resp = await chai.request(app).post(ROUTE).send(user);
+            const resp = await chai.request(app).patch(`/api/profiles/${id}/username`).send(user);
 
             expect(resp.status).to.equal(400);
             expect(resp.body).to.include(mockResponse);
         });
         
         it('should fail for unfound user', async () => {
-            const user = { id: 1, username: 'amagalla' };
+            const user = { username: 'amagalla' };
 
             const mockResponse = {
                 success: false,
@@ -111,7 +111,7 @@ describe(`POST ${ROUTE}`, () => {
             queryStub.onCall(0).resolves(mockCheckUser);
             queryStub.onCall(1).resolves([ { affectedRows: 0 } ]);
 
-            const resp = await chai.request(app).post(ROUTE).send(user);
+            const resp = await chai.request(app).patch(`/api/profiles/${id}/username`).send(user);
 
             expect(resp.status).to.equal(400);
             expect(resp.body).to.include(mockResponse);
@@ -120,7 +120,7 @@ describe(`POST ${ROUTE}`, () => {
 
     context('shout register username', () =>{
         it('should register', async () => {
-            const user = { id: 1, username: 'amagalla' };
+            const user = { username: 'amagalla' };
 
             const mockResponse = {
                 success: true,
@@ -128,7 +128,7 @@ describe(`POST ${ROUTE}`, () => {
                 message: 'Username updated successfully',
                 token: mockToken,
                 user: {
-                    id: user.id,
+                    id,
                     email: 'email@email.test',
                     username: user.username
                 },
@@ -151,7 +151,7 @@ describe(`POST ${ROUTE}`, () => {
             queryStub.onCall(2).resolves(mockGetProfile);
             jwtSignStub.returns(mockToken);
 
-            const resp = await chai.request(app).post(ROUTE).send(user);
+            const resp = await chai.request(app).patch(`/api/profiles/${id}/username`).send(user);
 
             expect(resp.status).to.equal(200);
             expect(resp.body).to.deep.include(mockResponse);
