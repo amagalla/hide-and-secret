@@ -29,7 +29,8 @@ const Login = () => {
         try {
             const resp = await apiClient.post('/profiles/login', loginData);
             if (!resp.data.has_username) {
-                navigate('/username');
+                const data = resp.data.user;
+                navigate('/username', { state: { id: data.id } });
             } else {
                 localStorage.setItem('token', resp.data.token);
                 navigate('/landing');
