@@ -36,9 +36,6 @@ const router = express.Router();
  *          type: object
  *          description: Username to be registered
  *          properties:
- *              id:
- *                  type: string
- *                  example: 1
  *              username:
  *                  type: string
  *                  example: yuri
@@ -149,9 +146,9 @@ router.post(
 /**
  * @swagger
  *
- *  /api/profiles/register/username:
+ *  /api/profiles/{id}/username:
  *
- *  post:
+ *  patch:
  *      description: Register a username
  *      produces:
  *          - application/json
@@ -162,6 +159,11 @@ router.post(
  *            required: true
  *            schema:
  *              $ref: '#/definitions/RegisterUsername'
+*          - in: path
+ *            name: id
+ *            desctiption: User's id to change username
+ *            required: true
+ *            type: number
  *      responses:
  *          200:
  *            description: Username updated successfully
@@ -170,13 +172,14 @@ router.post(
  *
  */
 
-router.post(
-    '/register/username',
+router.patch(
+    '/:id/username',
     usernameValidator,
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         let resp: RegisterUserResponse;
 
-        const { id, username } = req.body;
+        const { id } = req.params;
+        const { username } = req.body;
         
         try {
             resp = await registerUsername(id, username);
