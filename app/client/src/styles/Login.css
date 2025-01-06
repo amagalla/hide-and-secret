@@ -4,134 +4,92 @@
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-    color: #fff;
-    font-family: 'Roboto', sans-serif;
-    padding: 20px;
-}
-
-.login-container h1 {
+    background-color: #f3f4f6;
+    padding: 2rem;
+  }
+  
+  .login-container h1 {
     font-size: 2.5rem;
-    margin-bottom: 20px;
+    font-weight: bold;
+    color: #1f2937;
+    margin-bottom: 1.5rem;
     text-align: center;
-}
-
-form {
-    background-color: #ffffff;
-    color: #333;
-    padding: 30px 25px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    max-width: 400px;
+  }
+  
+  form {
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     width: 100%;
+    max-width: 400px;
     display: flex;
     flex-direction: column;
-}
-
-form input {
+    gap: 1rem;
+  }
+  
+  form input {
     width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
     font-size: 1rem;
+    color: #4b5563;
     outline: none;
-    transition: border-color 0.3s ease;
-}
-
-form input:focus {
-    border-color: #6a11cb;
-    box-shadow: 0 0 5px rgba(106, 17, 203, 0.5);
-}
-
-form button {
-    padding: 10px 15px;
-    background-color: #6a11cb;
-    color: #fff;
+    transition: border-color 0.2s ease;
+  }
+  
+  form input:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+  }
+  
+  form button {
+    padding: 0.75rem 1rem;
+    background-color: #6366f1;
+    color: #ffffff;
     border: none;
-    border-radius: 5px;
+    border-radius: 0.375rem;
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-form button:hover {
-    background-color: #2575fc;
-}
-
-form p {
-    font-size: 0.9rem;
-    color: red;
-    margin-top: 10px;
+    transition: background-color 0.2s ease;
+  }
+  
+  form button:hover {
+    background-color: #4f46e5;
+  }
+  
+  form button:active {
+    background-color: #4338ca;
+  }
+  
+  .error-message {
+    color: #ef4444;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
     text-align: center;
-}
-
-.btn-register {
-    display: inline-block;
-    background-color: #fff;
+  }
+  
+  .btn-register {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    background-color: transparent;
+    color: #6366f1;
+    border: 2px solid #6366f1;
+    border-radius: 0.375rem;
     font-size: 1rem;
-    font-weight: 500;
-    text-align: center;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 4px;
+    font-weight: bold;
     cursor: pointer;
-    transition: all 0.3s ease;
-    max-width: 400px;
-    width: 100%;
-    margin-top: 20px;
-    text-decoration: none;
-}
-
-.btn-register:hover {
-    background-color: #2575fc;
-    transform: translateY(-2px);
-}
-
-.btn-register:active {
-    background-color: #1e3a8a;
-    transform: translateY(0);
-}
-
-.btn-register:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(106, 17, 203, 0.6);
-}
-
-/* Styles for the error message */
-.error-message {
-    background-color: #ffcccb; /* Softer red background */
-    color: #d32f2f; /* Darker red for better contrast */
-    border-left: 5px solid #d32f2f; /* Bold left border for emphasis */
-    padding: 15px 20px; /* Extra padding for a spacious look */
-    border-radius: 8px; /* Rounded corners for a smoother design */
-    font-size: 1rem; /* Larger font size for better readability */
-    margin-top: 20px; /* Space above the error message */
-    max-width: 400px; /* Limit the width of the error message */
-    margin-left: auto;
-    margin-right: auto; /* Center the error message */
-    text-align: center; /* Center the text */
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
-    transition: transform 0.3s ease, opacity 0.3s ease; /* Smooth transition for visibility */
-}
-
-/* Optional hover effect to indicate it can be dismissed */
-.error-message:hover {
-    background-color: #ffb3b3; /* Slightly lighter background on hover */
-    cursor: pointer; /* Change cursor to pointer */
-    transform: translateY(-5px); /* Lift the message up on hover */
-    opacity: 0.9; /* Slightly decrease opacity on hover */
-}
-
-/* Fade-in animation for when the error message appears */
-.error-message-enter {
-    opacity: 0;
-    transform: translateY(-10px);
-}
-
-.error-message-enter-active {
-    opacity: 1;
-    transform: translateY(0);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
+    transition: all 0.2s ease;
+  }
+  
+  .btn-register:hover {
+    background-color: #6366f1;
+    color: #ffffff;
+  }
+  
+  .btn-register:active {
+    background-color: #4f46e5;
+    border-color: #4f46e5;
+  }
