@@ -1,6 +1,7 @@
 import { useState, FormEvent, ChangeEvent, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import apiClient from '../utils/apiClient';
 import '../styles/Login.css'
 
 const Login = () => {
@@ -26,7 +27,7 @@ const Login = () => {
         e.preventDefault();
 
         try {
-            const resp = await axios.post(`${import.meta.env.VITE_API}/profiles/login`, loginData);
+            const resp = await apiClient.post('/profiles/login', loginData);
             if (!resp.data.has_username) {
                 navigate('/username');
             } else {
