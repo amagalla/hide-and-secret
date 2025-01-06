@@ -42,6 +42,23 @@ describe(`POST /api/profiles/:id/username`, () => {
             expect(resp.body).to.include(mockResponse);
         });
         
+        it('should fail for no id param', async () => {
+            const user = { username: 'amagalla' };
+
+            const mockResponse = {
+                success: false,
+                statusCode: 400,
+                message: 'Please register first'
+            }
+
+            const no_id = 'undefined';
+
+            const resp = await chai.request(app).patch(`/api/profiles/${no_id}/username`).send(user);
+
+            expect(resp.status).to.equal(400);
+            expect(resp.body).to.include(mockResponse);
+        });
+        
         it('should fail for short username', async () => {
             const user = { username: 'abc' };
 

@@ -180,6 +180,10 @@ router.patch(
 
         const { id } = req.params;
         const { username } = req.body;
+
+        if (id === 'undefined') {
+            return next(createError(400, 'Please register first'));
+        }
         
         try {
             resp = await registerUsername(id, username);
