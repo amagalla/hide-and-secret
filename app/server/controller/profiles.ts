@@ -1,5 +1,5 @@
 import db from '../db/mysql.config'
-import { RegisterUserResponse, LogUserResponse } from '../types/profiles.types';
+import { RegisterUserResponse, LogUserResponse, GetUserInfoResponse } from '../types/profiles.types';
 import { ResultSetHeader, RowDataPacket } from 'mysql2';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -143,8 +143,32 @@ const registerUsername = async (id: string, username: string): Promise<LogUserRe
   return { status: 500, error: 'Unexpected error occurred' };
 }
 
+const getProfileInfo = async (id: string): Promise<GetUserInfoResponse> => {
+  const getProfile = 'SELECT id, email, username, google_id, google_email FROM profiles WHERE id = ?';
+  try {
+    const [resp] = await db.query<RowDataPacket[]>(getProfile, [id]);
+
+    if (resp.length === 0) {
+      return { status: 400, error: 'No user found' };
+    }
+
+    return {
+      success: true,
+      statusCode: 200,
+      message: 'Retrieved profile data succesfully',
+      user: resp[0]
+    };
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      return { status: 500, error: 'Unexpected error occured when retreiving profile' }
+    }
+  }
+  return { status: 500, error: 'Unexpected error occurred' };
+}
+
 export {
   registerUser,
   loginUser,
-  registerUsername
+  registerUsername,
+  getProfileInfo
 }

@@ -32,7 +32,7 @@ const Login = () => {
                 const data = resp.data.user;
                 navigate('/username', { state: { id: data.id } });
             } else {
-                localStorage.setItem('token', resp.data.token);
+                localStorage.setItem('Authorization', resp.data.token);
                 navigate('/landing');
             }
         } catch (err: unknown) {
@@ -54,7 +54,7 @@ const Login = () => {
     }
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('Authorization');
         if (token) {
           navigate('/landing');
         }

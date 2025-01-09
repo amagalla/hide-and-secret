@@ -1,10 +1,12 @@
 import express, { Request, Response, NextFunction } from 'express';
 import createError from 'http-errors';
-import { registerUser, loginUser, registerUsername } from '../../controller/profiles';
-import { RegisterUserResponse, LogUserResponse } from '../../types/profiles.types';
+import { registerUser, loginUser, registerUsername, getProfileInfo } from '../../controller/profiles';
+import { RegisterUserResponse, LogUserResponse, GetUserInfoResponse } from '../../types/profiles.types';
 import hashPassword from '../../middleware/profiles/hash-password';
 import emailValidator from '../../middleware/profiles/email-validator';
 import usernameValidator from '../../middleware/profiles/username-validator';
+import authenticateToken from '../../middleware/profiles/authenticate';
+import { authUserInfo } from '../../@types/req';
  
 const router = express.Router();
 
@@ -195,6 +197,69 @@ router.patch(
 
             res.status(200).send(resp);
         } catch (err: unknown) {
+            if (err instanceof Error) {
+                return next(createError(`${err.message}` || 'An error has occured'));
+            }
+        }
+    }
+)
+
+/**
+ * @swagger
+ * 
+ * /api/profiles/me:
+ *   get:
+ *     description: Get full user's profile information
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved profile data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 username:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *                 fullName:
+ *                   type: string
+ *       400:
+ *         description: Failed to retrieve profile data due to a bad request
+ *       401:
+ *         description: Unauthorized - Token missing or invalid
+ *       500:
+ *         description: Internal server error
+ */
+
+router.get(
+    '/me',
+    authenticateToken,
+    async (req: authUserInfo, res: Response, next: NextFunction): Promise<void> => {
+
+        if (!req.user) {
+            return next(createError(401, 'Unauthorized user'));
+        }
+
+        let resp: GetUserInfoResponse;
+
+        try {
+            resp = await getProfileInfo(req.user.id);
+
+            if (resp && resp.error) {
+                const status = resp.status || 500;
+                return next(createError(status, `${resp.error}`));
+            }
+
+            res.status(200).send(resp);
+
+        } catch(err: unknown) {
             if (err instanceof Error) {
                 return next(createError(`${err.message}` || 'An error has occured'));
             }
