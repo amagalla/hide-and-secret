@@ -13,8 +13,9 @@ services:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: ${DB_NAME}
+      JWT_SECRET: ${JWT_SECRET}
       TEST_PATH: ${TEST_PATH}
-    command: npm run docker-test $TEST_PATH
+    command: sh -c "npm run docker-test $TEST_PATH"
     depends_on:
       mysql:
         condition: service_healthy

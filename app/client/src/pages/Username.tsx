@@ -30,7 +30,7 @@ const Username = () => {
         try {
             const resp = await apiClient.patch(`/profiles/${id}/username`, usernameData);
 
-            localStorage.setItem('token', resp.data.token);
+            localStorage.setItem('Authorization', resp.data.token);
             navigate('/landing');
         } catch (err: unknown) {
             if (err instanceof Error) {

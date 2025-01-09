@@ -17,3 +17,14 @@ export type LogUserResponse = {
   token?: string;
   user?: object;
 }
+
+export type GetUserInfoResponse = {
+  status?: number;
+  statusCode?: number;
+  has_username?: boolean;
+  success?: boolean;
+  error?: string;
+  message?: string;
+  token?: string;
+  user?: object;
+}
