@@ -3,6 +3,7 @@ import Login from './pages/Login';
 import Registration from './pages/Registration';
 import Username from './pages/Username';
 import LandingPage from './pages/LandingPage';
+import { UserProfileProvider } from './store/context/userProfileContext';
 import './styles/App.css'
 
 const App = () => {
@@ -12,7 +13,14 @@ const App = () => {
         <Route path='/' element={<Login />} />
         <Route path='/register' element={<Registration />} />
         <Route path='/username' element={<Username />} />
-        <Route path='/landing' element={<LandingPage />} />
+        <Route
+          path='/landing'
+          element={
+            <UserProfileProvider> 
+              <LandingPage />
+            </UserProfileProvider>
+          }
+        />
       </Routes>
     </div>
   )
