@@ -34,6 +34,7 @@ export const UserProfileProvider: React.FC<{ children: React.ReactNode }> = ({ c
                 }
             } catch (error) {
                 console.error('Failed to fetch profile', error);
+                return;
             } finally {
                 setIsLoading(false);
             }
