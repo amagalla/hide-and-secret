@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useUserProfile } from '../store/context/userProfileContext'
+import { useUserProfile } from '../store/context/UserProfileContext';
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -15,15 +15,21 @@ const LandingPage = () => {
     const token = localStorage.getItem('Authorization');
     if (!token) {
       navigate('/');
+      return;
     }
-  }, [navigate]);
+
+    if (!profile && !isLoading) {
+      navigate('/');
+    }
+  }, [navigate, profile, isLoading]);
 
   if (isLoading) {
     return <div>Loading profile...</div>;
   }
 
   if (!profile) {
-    return <div>Error: Profile not found</div>;
+    localStorage.removeItem('Authorization');
+    return;
   }
 
   return (
