@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node dist/index.js",
     "dev": "nodemon --files -L index.ts",
-    "build": "tsc"
+    "build": "tsc && cp -R config/swagger dist/config/swagger"
   },
   "keywords": [],
   "author": "",
