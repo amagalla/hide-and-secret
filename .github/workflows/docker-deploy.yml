@@ -24,13 +24,13 @@ jobs:
 
     - name: Build and push client image
       run: |
-        docker build -f Dockerfile.prod \
+        docker build -f app/client/Dockerfile.prod \
           --build-arg VITE_API=${{ secrets.VITE_API_STAGING }} \
           -t amagalla24/hide-and-secret-client:latest .
         docker push amagalla24/hide-and-secret-client:latest
 
     - name: Build and push server image
       run: |
-        docker build -f Dockerfile.prod \
+        docker build -f app/server/Dockerfile.prod \
           -t amagalla24/hide-and-secret-server:latest .
         docker push amagalla24/hide-and-secret-server:latest
