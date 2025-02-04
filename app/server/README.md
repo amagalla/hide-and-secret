@@ -4,6 +4,15 @@ Make sure you have production build ready
 
 docker login (if not logged in)
 
+To Test Locally
+
+``` sh
+    docker build -f Dockerfile.prod -t hide-and-secret-server .
+    docker run -d -p 3000:3000 hide-and-secret-server
+
+    docker run -d -p 3000:3000 --env-file .env.staging hide-and-secret-server
+```
+
 ``` sh
     docker build -f Dockerfile.prod -t hide-and-secret-server .
     docker tag hide-and-secret-server amagalla24/hide-and-secret-server:latest
@@ -17,6 +26,12 @@ To test image
     docker run -d -p 3000:3000 amagalla24/hide-and-secret-server:latest
     docker ps
     docker stop <container_id>
+```
+
+To check inside image
+
+``` sh
+    docker run -it hide-and-secret-server sh
 ```
 
 ## Create Knex Migrations

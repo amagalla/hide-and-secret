@@ -5,9 +5,13 @@ build/
 
 .env
 .env.local
+.env.staging
 
 *.ts
 *.tsx
+
+!index.ts
+!knexfile.ts
 
 *.log
 npm-debug.log*
