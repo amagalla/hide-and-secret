@@ -58,13 +58,14 @@ jobs:
 
     - name: Register new ECS task definition
       run: |
+        cd .github/workflows
         # Update image references in task definition file
         sed -i 's|amagalla24/hide-and-secret-server:latest|amagalla24/hide-and-secret-server:latest|g' ecs-task-definition.json
         sed -i 's|amagalla24/hide-and-secret-client:latest|amagalla24/hide-and-secret-client:latest|g' ecs-task-definition.json
 
         # Register the task definition with ECS
         aws ecs register-task-definition \
-          --cli-input-json file://.github/workflows/ecs-task-definition.json
+          --cli-input-json file://ecs-task-definition.json
 
     - name: Update ECS service with new task definition
       run: |
