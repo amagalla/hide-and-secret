@@ -1,0 +1,150 @@
+{
+    "taskDefinitionArn": "arn:aws:ecs:us-east-1:961341516740:task-definition/HideAndSecret-staging",
+    "containerDefinitions": [
+        {
+            "name": "hide-and-secret-server",
+            "image": "amagalla24/hide-and-secret-server:latest",
+            "cpu": 0,
+            "portMappings": [
+                {
+                    "name": "3000",
+                    "containerPort": 3000,
+                    "hostPort": 3000,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                }
+            ],
+            "essential": true,
+            "environment": [],
+            "environmentFiles": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "secrets": [
+                {
+                    "name": "ADMIN_PASSWORD",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:961341516740:secret:staging/server/keys-p3QFTj:ADMIN_PASSWORD::"
+                },
+                {
+                    "name": "ADMIN_USERNAME",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:961341516740:secret:staging/server/keys-p3QFTj:ADMIN_USERNAME::"
+                },
+                {
+                    "name": "DB_HOST",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:961341516740:secret:staging/server/keys-p3QFTj:DB_HOST::"
+                },
+                {
+                    "name": "DB_NAME",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:961341516740:secret:staging/server/keys-p3QFTj:DB_NAME::"
+                },
+                {
+                    "name": "DB_PASSWORD",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:961341516740:secret:staging/server/keys-p3QFTj:DB_PASSWORD::"
+                },
+                {
+                    "name": "DB_PORT",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:961341516740:secret:staging/server/keys-p3QFTj:DB_PORT::"
+                },
+                {
+                    "name": "DB_USER",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:961341516740:secret:staging/server/keys-p3QFTj:DB_USER::"
+                },
+                {
+                    "name": "JWT_SECRET",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:961341516740:secret:staging/server/keys-p3QFTj:JWT_SECRET::"
+                },
+                {
+                    "name": "NODE_ENV",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:961341516740:secret:staging/server/keys-p3QFTj:NODE_ENV::"
+                },
+                {
+                    "name": "PORT",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:961341516740:secret:staging/server/keys-p3QFTj:PORT::"
+                }
+            ],
+            "ulimits": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/HideAndSecret-staging",
+                    "mode": "non-blocking",
+                    "awslogs-create-group": "true",
+                    "max-buffer-size": "25m",
+                    "awslogs-region": "us-east-1",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            },
+            "systemControls": []
+        },
+        {
+            "name": "hide-and-secret-client",
+            "image": "amagalla24/hide-and-secret-client:latest",
+            "cpu": 0,
+            "portMappings": [
+                {
+                    "name": "80",
+                    "containerPort": 80,
+                    "hostPort": 80,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                }
+            ],
+            "essential": false,
+            "environment": [],
+            "environmentFiles": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "systemControls": []
+        }
+    ],
+    "family": "HideAndSecret-staging",
+    "executionRoleArn": "arn:aws:iam::961341516740:role/ecsTaskExecutionRole",
+    "networkMode": "awsvpc",
+    "revision": 6,
+    "volumes": [],
+    "status": "ACTIVE",
+    "requiresAttributes": [
+        {
+            "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+        },
+        {
+            "name": "ecs.capability.execution-role-awslogs"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+        },
+        {
+            "name": "ecs.capability.secrets.asm.environment-variables"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.28"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+        },
+        {
+            "name": "ecs.capability.task-eni"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
+        }
+    ],
+    "placementConstraints": [],
+    "compatibilities": [
+        "EC2",
+        "FARGATE"
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "512",
+    "memory": "1024",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    },
+    "registeredAt": "2025-02-05T06:24:45.575Z",
+    "registeredBy": "arn:aws:iam::961341516740:user/iamadmin",
+    "enableFaultInjection": false,
+    "tags": []
+}
