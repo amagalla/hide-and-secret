@@ -10,6 +10,8 @@
     "dev": "concurrently \"nodemon -L app/server/index.ts\" \"npm --prefix app/client run dev\"",
     "build": "npm --prefix app/client run build && npm --prefix app/server run build",
     "serve": "npm i && docker-compose up",
+    "android": "cd app/mobile && npx react-native run-android",
+    "ios": "cd app/mobile && npx react-native run-ios",
     "mysql": "docker exec -it mysql mysql -u hide -p",
     "docker-test": "mocha --require ts-node/register ${TEST_PATH} --exit",
     "test": "npm i && docker-compose -f docker-compose.test.yml run --rm test-server",
