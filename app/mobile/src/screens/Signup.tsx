@@ -28,13 +28,7 @@ const Signup = ({ navigation }: SignupProps): React.JSX.Element => {
   const handleRegister = async () => {
     try {
       const resp = await apiClient.post('/profiles/register', register);
-      if (!resp.data.has_username) {
-        const data = resp.data.user;
-        navigation.replace('Username');
-      } else {
-        await AsyncStorage.setItem('Authorization', resp.data.token);
-        navigation.navigate('Game');
-      }
+        navigation.replace('Username', { id: resp.data.id });
     } catch (err: unknown) {
       if (err instanceof Error) {
         if (axios.isAxiosError(err)) {
@@ -121,10 +115,10 @@ const Signup = ({ navigation }: SignupProps): React.JSX.Element => {
             />
             {errorMessage && <Text style={styles.error}>{errorMessage}</Text>}
             <TouchableOpacity style={styles.button} onPress={handleRegister}>
-              <Text style={styles.buttonText}>Register</Text>
+              <Text style={styles.buttonText}>Signup</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.link} onPress={() => navigation.replace('Login')}>
-              <Text style={styles.linkText}>Login</Text>
+              <Text style={styles.linkText}>Back to Login</Text>
             </TouchableOpacity>
           </Animated.View>
         )}
