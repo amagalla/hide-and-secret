@@ -7,27 +7,27 @@ import { RootStackParamList } from '../App';
 import axios from 'axios';
 import apiClient from '../../utils/apiClient';
 
-type LoginProps = NativeStackScreenProps<RootStackParamList, 'Login'>;
+type SignupProps = NativeStackScreenProps<RootStackParamList, 'Signup'>;
 
-const Login = ({ navigation }: LoginProps): React.JSX.Element => {
-  const [login, setLogin] = useState({
+const Signup = ({ navigation }: SignupProps): React.JSX.Element => {
+  const [register, setRegister] = useState({
     email: '',
     password: '',
   });
 
   const [errorMessage, setErrorMessage] = useState('');
-  const [titleAnimationDone, setTitleAnimationDone] = useState(false);
+  const [animationDone, setAnimationDone] = useState(false);
 
   const handleChange = (name: string, value: string) => {
-    setLogin({
-      ...login,
+    setRegister({
+      ...register,
       [name]: value,
     });
   };
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     try {
-      const resp = await apiClient.post('/profiles/login', login);
+      const resp = await apiClient.post('/profiles/register', register);
       if (!resp.data.has_username) {
         const data = resp.data.user;
         navigation.replace('Username');
@@ -45,38 +45,68 @@ const Login = ({ navigation }: LoginProps): React.JSX.Element => {
     }
   };
 
-  const titleOpacity = useRef(new Animated.Value(0)).current;
+  const title = "Your Adventure Awaits";
+  const animatedValues = useRef(title.split('').map(() => ({
+    opacity: new Animated.Value(0),
+    translateY: new Animated.Value(-20),
+  }))).current;
+
   const contentOpacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    Animated.timing(titleOpacity, {
-      toValue: 1,
-      duration: 1000,
-      useNativeDriver: true,
-      easing: Easing.linear,
-    }).start(() => {
-      setTitleAnimationDone(true);
+    const animations = animatedValues.map((animatedValue, index) => {
+      return Animated.sequence([
+        Animated.timing(animatedValue.opacity, {
+          toValue: 1,
+          duration: 50,
+          delay: index * 50,
+          useNativeDriver: true,
+          easing: Easing.linear,
+        }),
+        Animated.timing(animatedValue.translateY, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+          easing: Easing.out(Easing.ease),
+        }),
+      ]);
+    });
+
+    Animated.stagger(50, animations).start(() => {
+      setAnimationDone(true);
       Animated.timing(contentOpacity, {
         toValue: 1,
         duration: 1000,
         useNativeDriver: true,
-        easing: Easing.linear,
       }).start();
     });
-  }, [titleOpacity, contentOpacity]);
+  }, [animatedValues, contentOpacity]);
 
   return (
     <SafeAreaProvider>
       <View style={styles.container}>
-        <Animated.Text style={[styles.title, { opacity: titleOpacity }]}>
-          Hide & Secret
-        </Animated.Text>
-        {titleAnimationDone && (
+        <View style={styles.titleContainer}>
+          {title.split('').map((char, index) => (
+            <Animated.Text
+              key={`${char}-${index}`}
+              style={[
+                styles.title,
+                {
+                  opacity: animatedValues[index].opacity,
+                  transform: [{ translateY: animatedValues[index].translateY }],
+                },
+              ]}
+            >
+              {char}
+            </Animated.Text>
+          ))}
+        </View>
+        {animationDone && (
           <Animated.View style={[styles.contentContainer, { opacity: contentOpacity }]}>
             <TextInput
               style={styles.input}
               placeholder="Email"
-              value={login.email}
+              value={register.email}
               keyboardType="email-address"
               autoCapitalize="none"
               onChangeText={(val) => handleChange('email', val)}
@@ -84,17 +114,17 @@ const Login = ({ navigation }: LoginProps): React.JSX.Element => {
             <TextInput
               style={styles.input}
               placeholder="Password"
-              value={login.password}
+              value={register.password}
               autoCapitalize="none"
               onChangeText={(val) => handleChange('password', val)}
               secureTextEntry
             />
             {errorMessage && <Text style={styles.error}>{errorMessage}</Text>}
-            <TouchableOpacity style={styles.button} onPress={handleLogin}>
-              <Text style={styles.buttonText}>Login</Text>
+            <TouchableOpacity style={styles.button} onPress={handleRegister}>
+              <Text style={styles.buttonText}>Register</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.link} onPress={() => navigation.replace('Signup')}>
-              <Text style={styles.linkText}>Signup</Text>
+            <TouchableOpacity style={styles.link} onPress={() => navigation.replace('Login')}>
+              <Text style={styles.linkText}>Login</Text>
             </TouchableOpacity>
           </Animated.View>
         )}
@@ -111,10 +141,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5FCFF',
     padding: 16,
   },
+  titleContainer: {
+    flexDirection: 'row',
+    marginBottom: 24,
+  },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
-    marginBottom: 24,
     color: '#333',
   },
   contentContainer: {
@@ -151,7 +184,6 @@ const styles = StyleSheet.create({
   },
   link: {
     marginTop: 16,
-    alignItems: 'center',
   },
   linkText: {
     color: '#007BFF',
@@ -159,4 +191,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Login;
+export default Signup;
