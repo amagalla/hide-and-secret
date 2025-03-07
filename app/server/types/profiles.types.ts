@@ -1,30 +1,23 @@
-export type RegisterUserResponse = {
+export type BaseResponse = {
   status?: number;
   statusCode?: number;
   success?: boolean;
   error?: string;
   message?: string;
+}
+
+export type RegisterUserResponse = BaseResponse & {
   id?: number;
 }
 
-export type LogUserResponse = {
-  status?: number;
-  statusCode?: number;
+export type LogUserResponse = BaseResponse & {
   has_username?: boolean;
-  success?: boolean;
-  error?: string;
-  message?: string;
   token?: string;
   user?: object;
 }
 
-export type GetUserInfoResponse = {
-  status?: number;
-  statusCode?: number;
+export type GetUserInfoResponse = BaseResponse & {
   has_username?: boolean;
-  success?: boolean;
-  error?: string;
-  message?: string;
   token?: string;
   user?: object;
 }
