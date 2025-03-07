@@ -22,6 +22,8 @@ This is the official Hide&Secret source code. Thank you all for contributing to 
     npm run ios
 ```
 
+2. If doesn't start, then just retry running the command
+
 ## Run React and Node server through docker-compose
 
 ```sh
