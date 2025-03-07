@@ -16,6 +16,7 @@ This is the official Hide&Secret source code. Thank you all for contributing to 
 ## Run Mobile application
 
 1. Run mobile either on android or ios emulater (Make sure react native tools are installed)
+https://www.youtube.com/watch?v=XV5LwKuk3zc&list=PLRAV69dS1uWSjBBJ-egNNOd4mdblt1P4c&index=2&ab_channel=HiteshChoudhary
 
 ```sh
     npm run android
