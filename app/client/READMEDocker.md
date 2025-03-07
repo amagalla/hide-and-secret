@@ -1,7 +1,5 @@
 ## Deploy to Dockerhub
 
-Make sure you have production build ready
-
 docker login (if not logged in)
 
 For Client
