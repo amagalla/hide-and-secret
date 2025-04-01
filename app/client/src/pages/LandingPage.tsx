@@ -39,6 +39,7 @@ const LandingPage = () => {
       <p>Email: {profile.email}</p>
       <p>Google ID: {profile.google_id || 'Not linked'}</p>
       <p>Google Email: {profile.google_email || 'Not linked'}</p>
+      <p>Score: { profile.score }</p>
       <button onClick={handleLogout}>Logout</button>
     </div>
   );
