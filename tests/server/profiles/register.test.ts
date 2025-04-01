@@ -3,7 +3,7 @@ import chaiHttp from 'chai-http';
 import sinon from 'sinon';
 import app from '../../../app/server/index';
 import db from '../../../app/server/db/mysql.config';
-import { MySQLError } from './configs/mysqlError';
+import { MySQLError } from '../configs/mysqlError';
 
 const chai = use(chaiHttp);
 
