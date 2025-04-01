@@ -6,6 +6,7 @@ services:
     container_name: server-test
     volumes:
       - .:/app
+      - ./tests:/app/tests
       - /app/node_modules
     environment:
       DB_HOST: ${DB_HOST}
@@ -15,7 +16,7 @@ services:
       DB_NAME: ${DB_NAME}
       JWT_SECRET: ${JWT_SECRET}
       TEST_PATH: ${TEST_PATH}
-    command: sh -c "npm run docker-test $TEST_PATH"
+    command: sh -c "npm run docker-test"
     depends_on:
       mysql:
         condition: service_healthy

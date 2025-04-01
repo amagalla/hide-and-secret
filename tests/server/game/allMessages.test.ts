@@ -7,7 +7,7 @@ import jwt from 'jsonwebtoken';
 
 const chai = use(chaiHttp);
 
-const ROUTE = '/api/profiles/me'
+const ROUTE = '/api/game/getAllMessages';
 
 describe(`GET ${ROUTE}`, () => {
     let
@@ -28,7 +28,7 @@ describe(`GET ${ROUTE}`, () => {
         jwtVerifyStub.restore();
     });
 
-    context('should not get profiles information', () => {
+    context('should not get all secret messages', () => {
         it('shoud not pass missing auth token', async () => {
             const mockResponse = {
                 success: false,
@@ -58,52 +58,68 @@ describe(`GET ${ROUTE}`, () => {
             expect(resp.body).to.include(mockResponse);
 
         });
-    });
 
+        it('should not pass with unexpected error', async () => {
+            const mockResponse = {
+                success: false,
+                statusCode: 500,
+                message: 'Unexpected error occurred when retrieving all secret messages'
+            };
+
+            queryStub.throws(new Error('Unexpected error occurred when retrieving all secret messages'));
+            
+            const resp = await chai.request(app).get(ROUTE).set('Authorization', mockToken).send();
+
+            expect(resp.status).to.equal(500);
+            expect(resp.body).to.include(mockResponse);
+
+        });
+    });
+    
     context('should pass with valid auth token', () => {
         it ('should pass', async () => {
             const mockResponse = {
-                "success": true,
-                "statusCode": 200,
-                "message": "Retrieved profile data succesfully",
-                "user": {
-                  "id": 1,
-                  "email": "email@email.test",
-                  "username": "amagalla",
-                  "google_id": null,
-                  "google_email": null
-                }
-              }
-            
+                success: true,
+                statusCode: 200,
+                message: 'Retrieved all secret messages successfully',
+                secretMessages: [
+                    {
+                        secrets_id: 1,
+                        message: 'Secret message from Yuri!',
+                        id: '1',
+                        latitude: 1.0,
+                        longitude: -1.0
+                    }
+                ]
+            };
+
             const decodedToken = {
                 id: '1',
                 email: 'email@email.test',
-                username: 'amagalla'
+                username: 'Yuri'
             }
 
             const mockQueryResult = [
                 [
-                   {
-                        id: 1,
-                        email: 'email@email.test',
-                        username: 'amagalla',
-                        google_id: null,
-                        google_email: null
+                    {
+                        secrets_id: 1,
+                        message: 'Secret message from Yuri!',
+                        id: '1',
+                        latitude: 1.0,
+                        longitude: -1.0
                     }
-                ],
-                []
-            ]
+                ]
+            ];
 
             jwtVerifyStub.returns(decodedToken);
 
             queryStub.resolves(mockQueryResult);
 
-            const resp = await chai.request(app).get(ROUTE).set('Authorization', `${mockToken}`).send();
+            const resp = await chai.request(app).get(ROUTE).set('Authorization', mockToken).send();
 
             expect(resp.status).to.equal(200);
-            expect(resp.body.success).to.be.true;
             expect(resp.body).to.deep.equal(mockResponse);
-
-        })
+            expect(resp.body.secretMessages).to.be.an('array').to.have.lengthOf(1);
+        });
     });
 });
