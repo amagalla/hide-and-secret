@@ -72,7 +72,7 @@ const loginUser = async (email: string, password: string): Promise<LogUserRespon
     }
 
     const token = jwt.sign(
-      { id: result[0].id, email: result[0].email, username: result[0].username },
+      { id: result[0].id, email: result[0].email, username: result[0].username, score: result[0].score },
       process.env.JWT_SECRET as string,
     );
 
@@ -85,7 +85,8 @@ const loginUser = async (email: string, password: string): Promise<LogUserRespon
       user: {
         id: result[0].id,
         email: result[0].email,
-        username: result[0].username
+        username: result[0].username,
+        score: result[0].score
       }
     };
 
@@ -119,7 +120,7 @@ const registerUsername = async (id: string, username: string): Promise<LogUserRe
     const [result] = await db.query<RowDataPacket[]>(getProfile, [id]);
 
     const token = jwt.sign(
-      { id: result[0].id, email: result[0].email, username: result[0].username },
+      { id: result[0].id, email: result[0].email, username: result[0].username, score: result[0].score },
       process.env.JWT_SECRET as string,
     );
 
@@ -131,7 +132,8 @@ const registerUsername = async (id: string, username: string): Promise<LogUserRe
       user: {
         id: result[0].id,
         email: result[0].email,
-        username: result[0].username
+        username: result[0].username,
+        score: result[0].score
       }
     };
   } catch (err: unknown) {
@@ -144,7 +146,7 @@ const registerUsername = async (id: string, username: string): Promise<LogUserRe
 }
 
 const getProfileInfo = async (id: string): Promise<GetUserInfoResponse> => {
-  const getProfile = 'SELECT id, email, username, google_id, google_email FROM profiles WHERE id = ?';
+  const getProfile = 'SELECT id, email, username, google_id, google_email, score FROM profiles WHERE id = ?';
   try {
     const [resp] = await db.query<RowDataPacket[]>(getProfile, [id]);
 

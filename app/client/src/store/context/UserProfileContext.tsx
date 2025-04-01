@@ -7,6 +7,7 @@ interface UserProfile {
     username: string;
     google_id: string | null;
     google_email: string | null;
+    score: number;
 }
 
 interface UserProfileContextType {

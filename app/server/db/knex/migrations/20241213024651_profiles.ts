@@ -10,6 +10,7 @@ export async function up(knex: Knex): Promise<void> {
             username            VARCHAR(255) DEFAULT NULL UNIQUE,
             password            VARCHAR(255) DEFAULT NULL,
             has_username        BOOLEAN DEFAULT FALSE,
+            score               INT NOT NULL DEFAULT 0,
             created_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY (id),
             CONSTRAINT UQ_USERNAME UNIQUE (username),

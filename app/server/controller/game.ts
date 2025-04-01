@@ -55,7 +55,44 @@ const postNewSecret = async (message: string, id: string, latitude: number, long
     return { status: 500, error: 'Unexpected error occurred when posting new secret message' };
 }
 
+const deleteAndStashSecret = async (id: string, secrets_id: string) => {
+    const
+        selectMessageQuery = 'SELECT message FROM public_secrets WHERE secrets_id = ?',
+        deleteQuery = 'DELETE FROM public_secrets WHERE secrets_id = ?',
+        stashQuery = 'INSERT INTO secret_stash (message, id) VALUES (?, ?)',
+        scoreUpdateQuery = 'UPDATE profiles SET score = score + 1 WHERE id = ?';
+
+    try {
+        const [rows] = await db.query<RowDataPacket[]>(selectMessageQuery, [secrets_id]);
+
+        if (rows.length === 0) {
+            return { status: 400, error: 'Secret message not found or already deleted' };
+        }
+
+        const { message } = rows[0];
+
+        await db.query(deleteQuery, [secrets_id]);
+
+        await db.query(stashQuery, [message, id]);
+
+        await db.query(scoreUpdateQuery, [id]);
+
+        return {
+            success: true,
+            statusCode: 200,
+            message: 'Successfully deleted and stashed the secret message',
+        }
+    } catch (err) {
+        if (err instanceof Error) {
+            return { status: 500, error: 'Unexpected error occurred when deleting and stashing secret' };
+        }
+    }
+
+    return { status: 500, error: 'Unexpected error occurred when deleting and stashing secret' };
+}
+
 export {
     getAllMessages,
-    postNewSecret
+    postNewSecret,
+    deleteAndStashSecret
 }

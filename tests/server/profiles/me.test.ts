@@ -71,7 +71,8 @@ describe(`GET ${ROUTE}`, () => {
                   "email": "email@email.test",
                   "username": "amagalla",
                   "google_id": null,
-                  "google_email": null
+                  "google_email": null,
+                  'score': 5
                 }
               }
             
@@ -88,7 +89,8 @@ describe(`GET ${ROUTE}`, () => {
                         email: 'email@email.test',
                         username: 'amagalla',
                         google_id: null,
-                        google_email: null
+                        google_email: null,
+                        score: 5
                     }
                 ],
                 []

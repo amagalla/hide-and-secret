@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import createError from 'http-errors';
 import authenticateToken from '../../middleware/profiles/authenticate';
 import { authUserInfo } from '../../@types/req';
-import { getAllMessages, postNewSecret } from '../../controller/game';
+import { getAllMessages, postNewSecret, deleteAndStashSecret } from '../../controller/game';
 import { GetAllMessagesResponse, BaseResponse } from '../../types/game.types';
 
 const router = express.Router();
@@ -182,6 +182,65 @@ router.post(
             }
 
             res.status(201).send(resp);
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                return next(createError(500, `${err.message}` || 'An error has occurred'));
+            }
+        }
+    }
+);
+
+/**
+ * @swagger
+ * 
+ * /api/game/secrets/{stashId}/stash:
+ *   post:
+ *      description: Delete a secret message and stash it
+ *      produces:
+ *          - application/json
+ *      security:
+ *          - bearerAuth: []
+ *      parameters:
+ *         - in: path
+ *           name: stashId
+ *           required: true
+ *           description: The ID of the secret message to be deleted and stashed
+ *           type: string
+ *      responses:
+ *          200:
+ *              description: Successfully deleted and stashed the secret message
+ *          400:
+ *              description: Bad Request - Invalid stash ID or Secret message not found
+ *          401:
+ *              description: Unauthorized User
+ *          500:
+ *              description: Internal Server Error
+ */
+
+router.post(
+    '/secrets/:stashId/stash',
+    authenticateToken,
+    async (req: authUserInfo, res: Response, next: NextFunction): Promise<void> => {
+
+        if (!req.user) {
+            return next(createError(401, 'Unauthorized User'));
+        }
+
+        const
+            { stashId } = req.params,
+            { id } = req.user;
+
+        let resp: BaseResponse;
+
+        try {
+            resp = await deleteAndStashSecret(id, stashId);
+
+            if (resp && resp.error) {
+                const status = resp.status || 500;
+                return next(createError(status, `${resp.error}`));
+            }
+
+            res.status(200).send(resp);
         } catch (err: unknown) {
             if (err instanceof Error) {
                 return next(createError(500, `${err.message}` || 'An error has occurred'));
