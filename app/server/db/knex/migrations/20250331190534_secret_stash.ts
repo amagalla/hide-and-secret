@@ -3,10 +3,10 @@ import type { Knex } from "knex";
 export async function up(knex: Knex): Promise<void> {
     await knex.schema.raw(`
         CREATE TABLE IF NOT EXISTS secret_stash (
-            message_id      BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+            stash_id        BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
             message         VARCHAR(500),
             id              BIGINT UNSIGNED NOT NULL,
-            PRIMARY KEY     (message_id),
+            PRIMARY KEY     (stash_id),
             FOREIGN KEY     (id) REFERENCES profiles(id) ON DELETE CASCADE
         );
     `)
