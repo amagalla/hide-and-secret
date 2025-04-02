@@ -30,3 +30,9 @@ export type SecretStash = {
     player_id: string;
     player_username: string;
 }
+
+export type Ranking = {
+    profile_id: string;
+    username: string;
+    score: number;
+}
