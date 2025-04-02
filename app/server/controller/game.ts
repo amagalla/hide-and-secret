@@ -1,6 +1,6 @@
 import db from '../db/mysql.config';
 import { ResultSetHeader, RowDataPacket } from 'mysql2';
-import { SecretMessage } from '../types/game.types';
+import { SecretMessage, SecretStash } from '../types/game.types';
 
 const getAllMessages = async () => {
     const getAllMessagesQuery = 'SELECT * FROM public_secrets';
@@ -29,6 +29,32 @@ const getAllMessages = async () => {
     }
 
     return { status: 500, error: 'Unexpected error occurred ' };
+}
+
+const getStashedSecrets = async (profile_id: string) => {
+    const getStashedSecretsQuery = 'SELECT stash_id, message, player_id, player_username FROM secret_stash WHERE profile_id = ?';
+
+    try {
+        const [resp] = await db.query<RowDataPacket[]>(getStashedSecretsQuery, [profile_id]);
+
+        const stashedSecrets: SecretStash[] = resp.map((row) => ({
+            stash_id: row.stash_id,
+            message: row.message,
+            player_id: row.player_id,
+            player_username: row.player_username,
+        }));
+
+        return {
+            success: true,
+            statusCode: 200,
+            message: 'Retrieved all stashed secret messages successfully',
+            stashedSecrets
+        }
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            return { status: 500, error: 'Unexpected error occurred when retrieving stashed secret messages' };
+        }
+    }
 }
 
 const postNewSecret = async (message: string, profile_id: string, latitude: number, longitude: number) => {
@@ -79,6 +105,10 @@ const deleteAndStashSecret = async (profile_id: string, secret_id: string) => {
 
         const { message, player_id, username } = rows[0];
 
+        if (player_id === profile_id) {
+            return { status: 400, error: 'You cannot stash your own secret message' };
+        }
+
         await db.query(deleteQuery, [secret_id]);
 
         await db.query(stashQuery, [message, profile_id, player_id, username]);
@@ -101,6 +131,7 @@ const deleteAndStashSecret = async (profile_id: string, secret_id: string) => {
 
 export {
     getAllMessages,
+    getStashedSecrets,
     postNewSecret,
     deleteAndStashSecret
 }

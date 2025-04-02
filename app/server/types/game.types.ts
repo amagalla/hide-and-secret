@@ -23,3 +23,10 @@ export type SecretMessage = {
     latitude: number;
     longitude: number;
 }
+
+export type SecretStash = {
+    stash_id: number;
+    message: string;
+    player_id: string;
+    player_username: string;
+}
