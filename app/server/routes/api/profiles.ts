@@ -180,8 +180,6 @@ router.patch(
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         let resp: RegisterUserResponse;
 
-        console.log('This is profile_id', req.params.profile_id);
-
         const { profile_id } = req.params;
         const { username } = req.body;
 

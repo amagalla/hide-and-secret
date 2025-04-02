@@ -80,7 +80,7 @@ describe(`POST ${ROUTE}`, () => {
     });
 
     context('should delete and stash a secret message', () => {
-        it('should successfully delete and stash the secret message', async () => {
+        it('should delete and stash a secret message', async () => {
             const mockResponse = {
                 success: true,
                 statusCode: 200,
@@ -89,14 +89,17 @@ describe(`POST ${ROUTE}`, () => {
 
             jwtVerifyStub.returns(decodedToken);
 
-            const selectMessageQuery = [{
-                message: 'This is a secret message',
-                profile_id: '1'
-            }];
+            queryStub.onFirstCall().resolves([
+                [{
+                    message: 'Hello World',
+                    player_id: '2',
+                    username: 'John'
+                }]
+            ]);
 
-            queryStub.onFirstCall().resolves([selectMessageQuery]);
-            queryStub.onSecondCall().resolves([{ affectedRows: 1 }]);
-            queryStub.onThirdCall().resolves([{ affectedRows: 1 }]);
+            queryStub.onSecondCall().resolves({});
+
+            queryStub.onThirdCall().resolves({});
 
             const resp = await chai.request(app).post(ROUTE.replace(':stashId', '1')).set('Authorization', `Bearer ${mockToken}`).send();
 
