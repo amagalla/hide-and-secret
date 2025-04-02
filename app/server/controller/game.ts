@@ -57,11 +57,19 @@ const postNewSecret = async (message: string, profile_id: string, latitude: numb
 
 const deleteAndStashSecret = async (profile_id: string, secret_id: string) => {
     const
-        selectMessageQuery = 'SELECT message FROM public_secrets WHERE secret_id = ?',
+        selectMessageQuery = `
+            SELECT 
+            ps.message, 
+            ps.profile_id AS player_id, 
+            p.username
+            FROM public_secrets ps
+            JOIN profiles p ON ps.profile_id = p.profile_id
+            WHERE ps.secret_id = ?;
+            `,
         deleteQuery = 'DELETE FROM public_secrets WHERE secret_id = ?',
-        stashQuery = 'INSERT INTO secret_stash (message, profile_id) VALUES (?, ?)',
+        stashQuery = 'INSERT INTO secret_stash (message, profile_id, player_id, player_username) VALUES (?, ?, ?, ?)',
         scoreUpdateQuery = 'UPDATE profiles SET score = score + 1 WHERE profile_id = ?';
-
+    
     try {
         const [rows] = await db.query<RowDataPacket[]>(selectMessageQuery, [secret_id]);
 
@@ -69,11 +77,11 @@ const deleteAndStashSecret = async (profile_id: string, secret_id: string) => {
             return { status: 400, error: 'Secret message not found or already deleted' };
         }
 
-        const { message } = rows[0];
+        const { message, player_id, username } = rows[0];
 
         await db.query(deleteQuery, [secret_id]);
 
-        await db.query(stashQuery, [message, profile_id]);
+        await db.query(stashQuery, [message, profile_id, player_id, username]);
 
         await db.query(scoreUpdateQuery, [profile_id]);
 
