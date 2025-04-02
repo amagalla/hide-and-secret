@@ -6,6 +6,7 @@ import Login from "./screens/Login";
 import Signup from "./screens/Signup";
 import Username from "./screens/Username";
 import Game from "./screens/Game";
+import { UserProfileProvider } from "./store/context/UserProfileContext";
 
 export type RootStackParamList = {
   Login: undefined;
@@ -24,7 +25,14 @@ const App = (): React.JSX.Element => {
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="Signup" component={Signup} />
           <Stack.Screen name="Username" component={Username} />
-          <Stack.Screen name="Game" component={Game} />
+          <Stack.Screen
+            name="Game">
+            {props => (
+              <UserProfileProvider>
+                <Game {...props} />
+              </UserProfileProvider>
+            )}
+          </Stack.Screen>
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
