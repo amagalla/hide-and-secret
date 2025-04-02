@@ -28,7 +28,7 @@ const Signup = ({ navigation }: SignupProps): React.JSX.Element => {
   const handleRegister = async () => {
     try {
       const resp = await apiClient.post('/profiles/register', register);
-        navigation.replace('Username', { id: resp.data.id });
+        navigation.replace('Username', { profile_id: resp.data.profile_id });
     } catch (err: unknown) {
       if (err instanceof Error) {
         if (axios.isAxiosError(err)) {

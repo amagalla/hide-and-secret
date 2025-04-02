@@ -7,7 +7,7 @@ export type BaseResponse = {
 }
 
 export type RegisterUserResponse = BaseResponse & {
-  id?: number;
+  profile_id?: number;
 }
 
 export type LogUserResponse = BaseResponse & {

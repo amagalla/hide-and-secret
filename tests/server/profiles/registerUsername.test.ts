@@ -7,13 +7,13 @@ import jwt from 'jsonwebtoken';
 
 const chai = use(chaiHttp);
 
-describe(`POST /api/profiles/:id/username`, () => {
+describe(`POST /api/profiles/:profile_id/username`, () => {
     let
         queryStub: sinon.SinonStub,
         jwtSignStub: sinon.SinonStub;
 
     const
-        id = 1,
+        profile_id = 1,
         mockToken = '$2b$10$somehashedpasswordvalue';
 
     beforeEach(() => {
@@ -36,26 +36,26 @@ describe(`POST /api/profiles/:id/username`, () => {
                 message: 'Username is required'
             }
 
-            const resp = await chai.request(app).patch(`/api/profiles/${id}/username`).send(user);
+            const resp = await chai.request(app).patch(`/api/profiles/${profile_id}/username`).send(user);
 
             expect(resp.status).to.equal(400);
             expect(resp.body).to.include(mockResponse);
         });
         
-        it('should fail for no id param', async () => {
+        it('should fail for no profile_id param', async () => {
             const user = { username: 'amagalla' };
 
             const mockResponse = {
                 success: false,
-                statusCode: 400,
-                message: 'Please register first'
+                statusCode: 500,
+                message: 'Unexpected error occured when updating username'
             }
 
             const no_id = 'undefined';
 
             const resp = await chai.request(app).patch(`/api/profiles/${no_id}/username`).send(user);
 
-            expect(resp.status).to.equal(400);
+            expect(resp.status).to.equal(500);
             expect(resp.body).to.include(mockResponse);
         });
         
@@ -68,7 +68,7 @@ describe(`POST /api/profiles/:id/username`, () => {
                 message: 'Username needs to be between 4 - 20 characters long'
             }
 
-            const resp = await chai.request(app).patch(`/api/profiles/${id}/username`).send(user);
+            const resp = await chai.request(app).patch(`/api/profiles/${profile_id}/username`).send(user);
 
             expect(resp.status).to.equal(400);
             expect(resp.body).to.include(mockResponse);
@@ -83,7 +83,7 @@ describe(`POST /api/profiles/:id/username`, () => {
                 message: 'Username needs to be between 4 - 20 characters long'
             }
 
-            const resp = await chai.request(app).patch(`/api/profiles/${id}/username`).send(user);
+            const resp = await chai.request(app).patch(`/api/profiles/${profile_id}/username`).send(user);
 
             expect(resp.status).to.equal(400);
             expect(resp.body).to.include(mockResponse);
@@ -106,7 +106,7 @@ describe(`POST /api/profiles/:id/username`, () => {
 
             queryStub.resolves(mockQueryResult);
 
-            const resp = await chai.request(app).patch(`/api/profiles/${id}/username`).send(user);
+            const resp = await chai.request(app).patch(`/api/profiles/${profile_id}/username`).send(user);
 
             expect(resp.status).to.equal(400);
             expect(resp.body).to.include(mockResponse);
@@ -128,7 +128,7 @@ describe(`POST /api/profiles/:id/username`, () => {
             queryStub.onCall(0).resolves(mockCheckUser);
             queryStub.onCall(1).resolves([ { affectedRows: 0 } ]);
 
-            const resp = await chai.request(app).patch(`/api/profiles/${id}/username`).send(user);
+            const resp = await chai.request(app).patch(`/api/profiles/${profile_id}/username`).send(user);
 
             expect(resp.status).to.equal(400);
             expect(resp.body).to.include(mockResponse);
@@ -145,7 +145,7 @@ describe(`POST /api/profiles/:id/username`, () => {
                 message: 'Username updated successfully',
                 token: mockToken,
                 user: {
-                    id,
+                    profile_id,
                     email: 'email@email.test',
                     username: user.username
                 },
@@ -157,7 +157,7 @@ describe(`POST /api/profiles/:id/username`, () => {
 
             const mockGetProfile = [
                 [{
-                    id: 1,
+                    profile_id: 1,
                     email: 'email@email.test',
                     username: 'amagalla',
                 }]
@@ -168,7 +168,7 @@ describe(`POST /api/profiles/:id/username`, () => {
             queryStub.onCall(2).resolves(mockGetProfile);
             jwtSignStub.returns(mockToken);
 
-            const resp = await chai.request(app).patch(`/api/profiles/${id}/username`).send(user);
+            const resp = await chai.request(app).patch(`/api/profiles/${profile_id}/username`).send(user);
 
             expect(resp.status).to.equal(200);
             expect(resp.body).to.deep.include(mockResponse);

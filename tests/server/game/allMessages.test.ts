@@ -14,9 +14,7 @@ describe(`GET ${ROUTE}`, () => {
         queryStub: sinon.SinonStub,
         jwtVerifyStub: sinon.SinonStub;
 
-    const
-        id = 1,
-        mockToken = '$2b$10$somehashedpasswordvalue';
+    const mockToken = '$2b$10$somehashedpasswordvalue';
 
     beforeEach(() => {
         queryStub = sinon.stub(db, 'query');
@@ -67,6 +65,14 @@ describe(`GET ${ROUTE}`, () => {
             };
 
             queryStub.throws(new Error('Unexpected error occurred when retrieving all secret messages'));
+
+            const decodedToken = {
+                profile_id: '1',
+                email: 'email@email.test',
+                username: 'Yuri'
+            }
+
+            jwtVerifyStub.returns(decodedToken);
             
             const resp = await chai.request(app).get(ROUTE).set('Authorization', mockToken).send();
 
@@ -84,9 +90,9 @@ describe(`GET ${ROUTE}`, () => {
                 message: 'Retrieved all secret messages successfully',
                 secretMessages: [
                     {
-                        secrets_id: 1,
+                        secret_id: 1,
                         message: 'Secret message from Yuri!',
-                        id: '1',
+                        profile_id: '1',
                         latitude: 1.0,
                         longitude: -1.0
                     }
@@ -94,7 +100,7 @@ describe(`GET ${ROUTE}`, () => {
             };
 
             const decodedToken = {
-                id: '1',
+                profile_id: '1',
                 email: 'email@email.test',
                 username: 'Yuri'
             }
@@ -102,9 +108,9 @@ describe(`GET ${ROUTE}`, () => {
             const mockQueryResult = [
                 [
                     {
-                        secrets_id: 1,
+                        secret_id: 1,
                         message: 'Secret message from Yuri!',
-                        id: '1',
+                        profile_id: '1',
                         latitude: 1.0,
                         longitude: -1.0
                     }

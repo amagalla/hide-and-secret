@@ -9,9 +9,9 @@ const getAllMessages = async () => {
         const [resp] = await db.query<RowDataPacket[]>(getAllMessagesQuery);
 
         const secretMessages: SecretMessage[] = resp.map((row) => ({
-            secrets_id: row.secrets_id,
+            secret_id: row.secret_id,
             message: row.message,
-            id: row.id,
+            profile_id: row.profile_id,
             latitude: row.latitude,
             longitude: row.longitude,
         }));
@@ -31,11 +31,11 @@ const getAllMessages = async () => {
     return { status: 500, error: 'Unexpected error occurred ' };
 }
 
-const postNewSecret = async (message: string, id: string, latitude: number, longitude: number) => {
-    const postNewSecretQuery = `INSERT INTO public_secrets (message, id, latitude, longitude) VALUES (?, ?, ?, ?)`;
+const postNewSecret = async (message: string, profile_id: string, latitude: number, longitude: number) => {
+    const postNewSecretQuery = `INSERT INTO public_secrets (message, profile_id, latitude, longitude) VALUES (?, ?, ?, ?)`;
 
     try {
-        const [result] = await db.query<ResultSetHeader>(postNewSecretQuery, [message, id, latitude, longitude]);
+        const [result] = await db.query<ResultSetHeader>(postNewSecretQuery, [message, profile_id, latitude, longitude]);
 
         if (result.affectedRows === 0) {
             return { status: 400, error: 'Failed to post new secret message' };
@@ -55,15 +55,15 @@ const postNewSecret = async (message: string, id: string, latitude: number, long
     return { status: 500, error: 'Unexpected error occurred when posting new secret message' };
 }
 
-const deleteAndStashSecret = async (id: string, secrets_id: string) => {
+const deleteAndStashSecret = async (profile_id: string, secret_id: string) => {
     const
-        selectMessageQuery = 'SELECT message FROM public_secrets WHERE secrets_id = ?',
-        deleteQuery = 'DELETE FROM public_secrets WHERE secrets_id = ?',
-        stashQuery = 'INSERT INTO secret_stash (message, id) VALUES (?, ?)',
-        scoreUpdateQuery = 'UPDATE profiles SET score = score + 1 WHERE id = ?';
+        selectMessageQuery = 'SELECT message FROM public_secrets WHERE secret_id = ?',
+        deleteQuery = 'DELETE FROM public_secrets WHERE secret_id = ?',
+        stashQuery = 'INSERT INTO secret_stash (message, profile_id) VALUES (?, ?)',
+        scoreUpdateQuery = 'UPDATE profiles SET score = score + 1 WHERE profile_id = ?';
 
     try {
-        const [rows] = await db.query<RowDataPacket[]>(selectMessageQuery, [secrets_id]);
+        const [rows] = await db.query<RowDataPacket[]>(selectMessageQuery, [secret_id]);
 
         if (rows.length === 0) {
             return { status: 400, error: 'Secret message not found or already deleted' };
@@ -71,11 +71,11 @@ const deleteAndStashSecret = async (id: string, secrets_id: string) => {
 
         const { message } = rows[0];
 
-        await db.query(deleteQuery, [secrets_id]);
+        await db.query(deleteQuery, [secret_id]);
 
-        await db.query(stashQuery, [message, id]);
+        await db.query(stashQuery, [message, profile_id]);
 
-        await db.query(scoreUpdateQuery, [id]);
+        await db.query(scoreUpdateQuery, [profile_id]);
 
         return {
             success: true,

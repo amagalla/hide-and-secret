@@ -3,13 +3,13 @@ import type { Knex } from "knex";
 export async function up(knex: Knex): Promise<void> {
     await knex.schema.raw(`
         CREATE TABLE IF NOT EXISTS public_secrets (
-        secrets_id      BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+        secret_id       BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
         message         VARCHAR(500),
-        id              BIGINT UNSIGNED NOT NULL,
+        profile_id      BIGINT UNSIGNED NOT NULL,
         latitude        DECIMAL (10, 7) NOT NULL,
         longitude       DECIMAL (10, 7) NOT NULL,
-        PRIMARY KEY     (secrets_id),
-        FOREIGN KEY     (id) REFERENCES profiles(id) ON DELETE CASCADE
+        PRIMARY KEY     (secret_id),
+        FOREIGN KEY     (profile_id) REFERENCES profiles(profile_id) ON DELETE CASCADE
         );
     `)
 }

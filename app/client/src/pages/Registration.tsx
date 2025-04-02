@@ -28,7 +28,7 @@ const Registration = () => {
     try {
       const resp = await apiClient.post('/profiles/register', regData);
 
-      navigate('/username', { state: { id: resp.data.id } });
+      navigate('/username', { state: { profile_id: resp.data.profile_id } });
     } catch (err: unknown) {
       if (err instanceof Error) {
         if (axios.isAxiosError(err)) {

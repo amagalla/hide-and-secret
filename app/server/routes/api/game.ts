@@ -59,7 +59,7 @@ const router = express.Router();
  *                                              type: number
  *                                          message:
  *                                              type: string
- *                                          id:
+ *                                          profile_id:
  *                                              type: number
  *                                          latitude:
  *                                              type: number
@@ -97,6 +97,10 @@ router.get(
     '/getAllMessages',
     authenticateToken,
     async (req: authUserInfo, res: Response, next: NextFunction): Promise<void> => {
+
+        if (!req.user) {
+            return next(createError(401, 'Unauthorized user'));
+        }
 
         let resp: GetAllMessagesResponse;
 
@@ -171,10 +175,10 @@ router.post(
 
         let resp: BaseResponse;
 
-        const { id } = req.user;
+        const { profile_id } = req.user;
 
         try {
-            resp = await postNewSecret(message, id, latitude, longitude);
+            resp = await postNewSecret(message, profile_id, latitude, longitude);
 
             if (resp && resp.error) {
                 const status = resp.status || 500;
@@ -193,7 +197,7 @@ router.post(
 /**
  * @swagger
  * 
- * /api/game/secrets/{stashId}/stash:
+ * /api/game/secrets/{secretId}/stash:
  *   post:
  *      description: Delete a secret message and stash it
  *      produces:
@@ -202,7 +206,7 @@ router.post(
  *          - bearerAuth: []
  *      parameters:
  *         - in: path
- *           name: stashId
+ *           name: secretId
  *           required: true
  *           description: The ID of the secret message to be deleted and stashed
  *           type: string
@@ -218,7 +222,7 @@ router.post(
  */
 
 router.post(
-    '/secrets/:stashId/stash',
+    '/secrets/:secretId/stash',
     authenticateToken,
     async (req: authUserInfo, res: Response, next: NextFunction): Promise<void> => {
 
@@ -227,13 +231,13 @@ router.post(
         }
 
         const
-            { stashId } = req.params,
-            { id } = req.user;
+            { secretId } = req.params,
+            { profile_id } = req.user;
 
         let resp: BaseResponse;
 
         try {
-            resp = await deleteAndStashSecret(id, stashId);
+            resp = await deleteAndStashSecret(profile_id, secretId);
 
             if (resp && resp.error) {
                 const status = resp.status || 500;

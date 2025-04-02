@@ -148,24 +148,24 @@ router.post(
 /**
  * @swagger
  *
- *  /api/profiles/{id}/username:
+ *  /api/profiles/{profile_id}/username:
  *
  *  patch:
  *      description: Register a username
  *      produces:
  *          - application/json
  *      parameters:
+ *          - in: path
+ *            name: profile_id
+ *            description: User's id to change username
+ *            required: true
+ *            type: number
  *          - in: body
  *            name: username
  *            description: Username to be registered
  *            required: true
  *            schema:
  *              $ref: '#/definitions/RegisterUsername'
-*          - in: path
- *            name: id
- *            desctiption: User's id to change username
- *            required: true
- *            type: number
  *      responses:
  *          200:
  *            description: Username updated successfully
@@ -175,20 +175,22 @@ router.post(
  */
 
 router.patch(
-    '/:id/username',
+    '/:profile_id/username',
     usernameValidator,
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         let resp: RegisterUserResponse;
 
-        const { id } = req.params;
+        console.log('This is profile_id', req.params.profile_id);
+
+        const { profile_id } = req.params;
         const { username } = req.body;
 
-        if (id === 'undefined') {
+        if (!profile_id) {
             return next(createError(400, 'Please register first'));
         }
         
         try {
-            resp = await registerUsername(id, username);
+            resp = await registerUsername(profile_id, username);
             
             if (resp && resp.error) {
                 const status = resp.status || 500;
@@ -222,7 +224,7 @@ router.patch(
  *             schema:
  *               type: object
  *               properties:
- *                 id:
+ *                 profile_id:
  *                   type: string
  *                 username:
  *                   type: string
@@ -250,7 +252,7 @@ router.get(
         let resp: GetUserInfoResponse;
 
         try {
-            resp = await getProfileInfo(req.user.id);
+            resp = await getProfileInfo(req.user.profile_id);
 
             if (resp && resp.error) {
                 const status = resp.status || 500;

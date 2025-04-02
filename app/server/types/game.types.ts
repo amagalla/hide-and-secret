@@ -8,18 +8,18 @@ export type BaseResponse = {
 
 export type GetAllMessagesResponse = BaseResponse & {
     secretMessages?: Array<{
-        secrets_id: number;
+        secret_id: number;
         message: string;
-        id: string;
+        profile_id: string;
         latitude: number;
         longitude: number;
     }>;
 }
 
 export type SecretMessage = {
-    secrets_id: number;
+    secret_id: number;
     message: string;
-    id: string;
+    profile_id: string;
     latitude: number;
     longitude: number;
 }

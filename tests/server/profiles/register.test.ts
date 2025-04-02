@@ -128,7 +128,7 @@ describe('POST /api/profiles/register', () => {
         success: true,
         statusCode: 200,
         message: 'User registered successfully',
-        id: 6
+        profile_id: 6
       };
 
       const mockQueryResult = {

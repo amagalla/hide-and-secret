@@ -35,7 +35,7 @@ const LandingPage = () => {
   return (
     <div>
       <h1>Welcome, {profile.username}!</h1>
-      <p>ID: {profile.id}</p>
+      <p>ID: {profile.profile_id}</p>
       <p>Email: {profile.email}</p>
       <p>Google ID: {profile.google_id || 'Not linked'}</p>
       <p>Google Email: {profile.google_email || 'Not linked'}</p>
