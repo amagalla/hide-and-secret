@@ -30,7 +30,7 @@ const Login = ({ navigation }: LoginProps): React.JSX.Element => {
       const resp = await apiClient.post('/profiles/login', login);
       if (!resp.data.has_username) {
         const data = resp.data.user;
-        navigation.replace('Username', { id: data.id });
+        navigation.replace('Username', { profile_id: data.profile_id });
       } else {
         await AsyncStorage.setItem('Authorization', resp.data.token);
         navigation.navigate('Game');

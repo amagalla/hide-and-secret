@@ -15,7 +15,7 @@ describe(`GET ${ROUTE}`, () => {
         jwtVerifyStub: sinon.SinonStub;
 
     const
-        id = 1,
+        profile_id = 1,
         mockToken = '$2b$10$somehashedpasswordvalue';
 
     beforeEach(() => {
@@ -67,7 +67,7 @@ describe(`GET ${ROUTE}`, () => {
                 "statusCode": 200,
                 "message": "Retrieved profile data succesfully",
                 "user": {
-                  "id": 1,
+                  "profile_id": 1,
                   "email": "email@email.test",
                   "username": "amagalla",
                   "google_id": null,
@@ -85,7 +85,7 @@ describe(`GET ${ROUTE}`, () => {
             const mockQueryResult = [
                 [
                    {
-                        id: 1,
+                        profile_id: 1,
                         email: 'email@email.test',
                         username: 'amagalla',
                         google_id: null,

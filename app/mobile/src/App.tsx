@@ -10,7 +10,7 @@ import Game from "./screens/Game";
 export type RootStackParamList = {
   Login: undefined;
   Signup: undefined;
-  Username: { id: string };
+  Username: { profile_id: string };
   Game: undefined;
 };
 

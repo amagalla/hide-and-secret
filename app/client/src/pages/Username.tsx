@@ -12,7 +12,7 @@ const Username = () => {
     
     const [errorMessage, setErrorMessage] = useState('');
     const location = useLocation();
-    const { id } = location.state || {};
+    const { profile_id } = location.state || {};
     const navigate = useNavigate();
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -28,7 +28,7 @@ const Username = () => {
         e.preventDefault();
 
         try {
-            const resp = await apiClient.patch(`/profiles/${id}/username`, usernameData);
+            const resp = await apiClient.patch(`/profiles/${profile_id}/username`, usernameData);
 
             localStorage.setItem('Authorization', resp.data.token);
             navigate('/landing');

@@ -10,7 +10,7 @@ import apiClient from '../../utils/apiClient';
 type UsernameProps = NativeStackScreenProps<RootStackParamList, 'Username'>;
 
 const Username = ({ navigation, route }: UsernameProps): React.JSX.Element => {
-  const { id } = route.params || {};
+  const { profile_id } = route.params || {};
   const [usernameData, setUsernameData] = useState({
     username: ''
   });
@@ -27,7 +27,7 @@ const Username = ({ navigation, route }: UsernameProps): React.JSX.Element => {
 
   const handleSubmit = async () => {
     try {
-      const resp = await apiClient.patch(`/profiles/${id}/username`, usernameData);
+      const resp = await apiClient.patch(`/profiles/${profile_id}/username`, usernameData);
       await AsyncStorage.setItem('Authorization', resp.data.token);
       navigation.navigate('Game');
     } catch (err: unknown) {

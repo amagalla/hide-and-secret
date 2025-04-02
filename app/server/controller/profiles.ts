@@ -25,7 +25,7 @@ const registerUser = async (email: string, password: string): Promise<RegisterUs
       success: true,
       statusCode: 200,
       message: 'User registered successfully',
-      id: result.insertId
+      profile_id: result.insertId
     };
   } catch (err: unknown) {
 
@@ -45,7 +45,7 @@ const registerUser = async (email: string, password: string): Promise<RegisterUs
 };
 
 const loginUser = async (email: string, password: string): Promise<LogUserResponse> => {
-  const loginQuery = `SELECT id, email, username, password, has_username FROM profiles WHERE email = ?`;
+  const loginQuery = `SELECT profile_id, email, username, password, has_username FROM profiles WHERE email = ?`;
 
   try {
     let [result] = await db.query<RowDataPacket[]>(loginQuery, email);
@@ -65,14 +65,14 @@ const loginUser = async (email: string, password: string): Promise<LogUserRespon
         has_username: result[0].has_username,
         message: 'Tranfer user to username page',
         user: {
-          id: result[0].id,
+          profile_id: result[0].profile_id,
           email: result[0].email,
         }
       };
     }
 
     const token = jwt.sign(
-      { id: result[0].id, email: result[0].email, username: result[0].username, score: result[0].score },
+      { profile_id: result[0].profile_id, email: result[0].email, username: result[0].username, score: result[0].score },
       process.env.JWT_SECRET as string,
     );
 
@@ -83,7 +83,7 @@ const loginUser = async (email: string, password: string): Promise<LogUserRespon
       message: 'User logged in successfully',
       token,
       user: {
-        id: result[0].id,
+        profile_id: result[0].profile_id,
         email: result[0].email,
         username: result[0].username,
         score: result[0].score
@@ -99,10 +99,10 @@ const loginUser = async (email: string, password: string): Promise<LogUserRespon
   return { status: 500, error: 'Unexpected error occurred' };
 }
 
-const registerUsername = async (id: string, username: string): Promise<LogUserResponse> => {
-  const checkValidUsername = 'SELECT id FROM profiles WHERE username = ?';
-  const updateQuery = 'UPDATE profiles SET username = ?, has_username = TRUE WHERE id = ?';
-  const getProfile = 'SELECT id, email, google_id, google_email, username FROM profiles WHERE id = ?';
+const registerUsername = async (profile_id: string, username: string): Promise<LogUserResponse> => {
+  const checkValidUsername = 'SELECT profile_id FROM profiles WHERE username = ?';
+  const updateQuery = 'UPDATE profiles SET username = ?, has_username = TRUE WHERE profile_id = ?';
+  const getProfile = 'SELECT profile_id, email, google_id, google_email, username FROM profiles WHERE profile_id = ?';
 
   try {
     const [checkUser] = await db.query<RowDataPacket[]>(checkValidUsername, username);
@@ -111,16 +111,16 @@ const registerUsername = async (id: string, username: string): Promise<LogUserRe
       return { status: 400, error: `Username ${username} already in use. Please choose another` };
     };
 
-    const [updatedUsername] = await db.query<ResultSetHeader>(updateQuery, [username, id]);
+    const [updatedUsername] = await db.query<ResultSetHeader>(updateQuery, [username, profile_id]);
 
     if (updatedUsername.affectedRows === 0) {
       return { status: 400, error: `User ${username} not found` };
     }
 
-    const [result] = await db.query<RowDataPacket[]>(getProfile, [id]);
+    const [result] = await db.query<RowDataPacket[]>(getProfile, [profile_id]);
 
     const token = jwt.sign(
-      { id: result[0].id, email: result[0].email, username: result[0].username, score: result[0].score },
+      { profile_id: result[0].profile_id, email: result[0].email, username: result[0].username, score: result[0].score },
       process.env.JWT_SECRET as string,
     );
 
@@ -130,7 +130,7 @@ const registerUsername = async (id: string, username: string): Promise<LogUserRe
       message: 'Username updated successfully',
       token,
       user: {
-        id: result[0].id,
+        profile_id: result[0].profile_id,
         email: result[0].email,
         username: result[0].username,
         score: result[0].score
@@ -145,10 +145,10 @@ const registerUsername = async (id: string, username: string): Promise<LogUserRe
   return { status: 500, error: 'Unexpected error occurred' };
 }
 
-const getProfileInfo = async (id: string): Promise<GetUserInfoResponse> => {
-  const getProfile = 'SELECT id, email, username, google_id, google_email, score FROM profiles WHERE id = ?';
+const getProfileInfo = async (profile_id: string): Promise<GetUserInfoResponse> => {
+  const getProfile = 'SELECT profile_id, email, username, google_id, google_email, score FROM profiles WHERE profile_id = ?';
   try {
-    const [resp] = await db.query<RowDataPacket[]>(getProfile, [id]);
+    const [resp] = await db.query<RowDataPacket[]>(getProfile, [profile_id]);
 
     if (resp.length === 0) {
       return { status: 400, error: 'No user found' };

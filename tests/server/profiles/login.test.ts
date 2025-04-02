@@ -76,7 +76,7 @@ describe(`POST ${ROUTE}`, () => {
 
             const mockQueryResult = [
                 [{
-                    id: 1,
+                    profile_id: 1,
                     email: 'email@email.test',
                     username: 'amagalla',
                     password: 'hashedPassword'
@@ -103,14 +103,14 @@ describe(`POST ${ROUTE}`, () => {
                 has_username: 0,
                 message: 'Tranfer user to username page',
                 user: {
-                  id: 1,
+                  profile_id: 1,
                   email: user.email,
                 }
               };
 
             const mockQueryResult = [
                 [{
-                    id: 1,
+                    profile_id: 1,
                     email: 'email@email.test',
                     username: null,
                     password: 'hashedPassword',
@@ -136,7 +136,7 @@ describe(`POST ${ROUTE}`, () => {
                 message: `User logged in successfully`,
                 token: mockToken,
                 user: {
-                    id: 1,
+                    profile_id: 1,
                     email: 'email@email.test',
                     username: 'amagalla'
                   }
@@ -144,7 +144,7 @@ describe(`POST ${ROUTE}`, () => {
 
             const mockQueryResult = [
                 [{
-                    id: 1,
+                    profile_id: 1,
                     email: 'email@email.test',
                     username: 'amagalla',
                     password: 'hashedPassword',

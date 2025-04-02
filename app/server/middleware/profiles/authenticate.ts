@@ -6,7 +6,7 @@ import { authUserInfo } from '../../@types/req';
 const JWT_SECRET = process.env.JWT_SECRET;
 
 type UserPlayload = {
-    id: string,
+    profile_id: string,
     email: string;
     username: string;
 }

@@ -10,7 +10,7 @@ const chai = use(chaiHttp);
 const ROUTE = '/api/game/postNewSecret';
 
 const decodedToken = {
-    id: '1',
+    profile_id: '1',
     email: 'email@email.test',
     username: 'Yuri'
 }
@@ -20,9 +20,7 @@ describe(`POST ${ROUTE}`, () => {
         queryStub: sinon.SinonStub,
         jwtVerifyStub: sinon.SinonStub;
 
-    const
-        id = 1,
-        mockToken = '$2b$10$somehashedpasswordvalue';
+    const mockToken = '$2b$10$somehashedpasswordvalue';
 
     beforeEach(() => {
         queryStub = sinon.stub(db, 'query');
@@ -139,7 +137,7 @@ describe(`POST ${ROUTE}`, () => {
 
             const mockQueryResult = [
                 {
-                    id: 1,
+                    profile_id: 1,
                     message: 'This is a secret message',
                     latitude: 37.7749,
                     longitude: -122.4194

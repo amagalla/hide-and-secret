@@ -28,9 +28,10 @@ const Login = () => {
 
         try {
             const resp = await apiClient.post('/profiles/login', loginData);
+            console.log(resp.data);
             if (!resp.data.has_username) {
                 const data = resp.data.user;
-                navigate('/username', { state: { id: data.id } });
+                navigate('/username', { state: { profile_id: data.profile_id } });
             } else {
                 localStorage.setItem('Authorization', resp.data.token);
                 navigate('/landing');
