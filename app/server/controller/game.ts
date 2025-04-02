@@ -1,6 +1,6 @@
 import db from '../db/mysql.config';
 import { ResultSetHeader, RowDataPacket } from 'mysql2';
-import { SecretMessage, SecretStash } from '../types/game.types';
+import { SecretMessage, SecretStash, Ranking } from '../types/game.types';
 
 const getAllMessages = async () => {
     const getAllMessagesQuery = 'SELECT * FROM public_secrets';
@@ -53,6 +53,39 @@ const getStashedSecrets = async (profile_id: string) => {
     } catch (err: unknown) {
         if (err instanceof Error) {
             return { status: 500, error: 'Unexpected error occurred when retrieving stashed secret messages' };
+        }
+    }
+}
+
+const getAllRanking = async () => {
+    const getAllRankingQuery = `
+        SELECT 
+        profile_id, 
+        username, 
+        score 
+        FROM profiles 
+        ORDER BY score DESC;
+    `;
+
+    try {
+        const [resp] = await db.query<RowDataPacket[]>(getAllRankingQuery);
+
+        const ranking: Ranking[] = resp.map((row) => ({
+            profile_id: row.profile_id,
+            username: row.username,
+            score: row.score,
+        }));
+
+        return {
+            success: true,
+            statusCode: 200,
+            message: 'Retrieved ranking successfully',
+            ranking
+        }
+
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            return { status: 500, error: 'Unexpected error occurred when retrieving ranking' };
         }
     }
 }
@@ -132,6 +165,7 @@ const deleteAndStashSecret = async (profile_id: string, secret_id: string) => {
 export {
     getAllMessages,
     getStashedSecrets,
+    getAllRanking,
     postNewSecret,
     deleteAndStashSecret
 }

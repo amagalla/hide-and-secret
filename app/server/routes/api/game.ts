@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import createError from 'http-errors';
 import authenticateToken from '../../middleware/profiles/authenticate';
 import { authUserInfo } from '../../@types/req';
-import { getAllMessages, postNewSecret, deleteAndStashSecret, getStashedSecrets } from '../../controller/game';
+import { getAllMessages, postNewSecret, deleteAndStashSecret, getStashedSecrets, getAllRanking } from '../../controller/game';
 import { GetAllMessagesResponse, BaseResponse } from '../../types/game.types';
 
 const router = express.Router();
@@ -153,6 +153,49 @@ router.get(
 
         try {
             resp = await getStashedSecrets(req.user.profile_id);
+
+            if (resp && resp.error) {
+                const status = resp.status || 500;
+                return next(createError(status, `${resp.error}`));
+            }
+
+            res.status(200).send(resp);
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                return next(createError(500, `${err.message}` || 'An error has occurred'));
+            }
+        }
+    }
+)
+
+/**
+ * @swagger
+ * 
+ * /api/game/ranking:
+ *  get:
+ *      description: Get the ranking of all players
+ *      produces:
+ *          - application/json
+ *      security:
+ *         - bearerAuth: []
+ *      responses:
+ *          200:
+ *             description: Successfully retrieved ranking
+ *          401:
+ *             description: Unauthorized User
+ *          500:
+ *             description: Internal Server Error
+ */
+
+router.get(
+    '/ranking',
+    authenticateToken,
+    async (req: authUserInfo, res: Response, next: NextFunction): Promise<void> => {
+
+        let resp;
+
+        try {
+            resp = await getAllRanking();
 
             if (resp && resp.error) {
                 const status = resp.status || 500;
