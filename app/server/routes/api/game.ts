@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import createError from 'http-errors';
 import authenticateToken from '../../middleware/profiles/authenticate';
 import { authUserInfo } from '../../@types/req';
-import { getAllMessages, postNewSecret, deleteAndStashSecret } from '../../controller/game';
+import { getAllMessages, postNewSecret, deleteAndStashSecret, getStashedSecrets } from '../../controller/game';
 import { GetAllMessagesResponse, BaseResponse } from '../../types/game.types';
 
 const router = express.Router();
@@ -121,6 +121,52 @@ router.get(
 
     }
 );
+
+/**
+ * @swagger
+ * 
+ * /api/game/stash:
+ *  get:
+ *     description: Get all stashed secret messages
+ *     produces:
+ *        - application/json
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved all stashed secret messages
+ *       401:
+ *         description: Unauthorized User
+ *       500:
+ *         description: Internal Server Error
+ */
+
+router.get(
+    '/stash',
+    authenticateToken,
+    async (req: authUserInfo, res: Response, next: NextFunction): Promise<void> => {
+        if (!req.user) {
+            return next(createError(401, 'Unauthorized User'));
+        }
+
+        let resp;
+
+        try {
+            resp = await getStashedSecrets(req.user.profile_id);
+
+            if (resp && resp.error) {
+                const status = resp.status || 500;
+                return next(createError(status, `${resp.error}`));
+            }
+
+            res.status(200).send(resp);
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                return next(createError(500, `${err.message}` || 'An error has occurred'));
+            }
+        }
+    }
+)
 
 /**
  * @swagger
