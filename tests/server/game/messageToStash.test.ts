@@ -77,6 +77,29 @@ describe(`POST ${ROUTE}`, () => {
             expect(resp.status).to.equal(400);
             expect(resp.body).to.include(mockResponse);
         });
+
+        it('should not pass picking own secret message', async () => {
+            const mockResponse = {
+                success: false,
+                statusCode: 400,
+                message: 'You cannot stash your own secret message'
+            };
+
+            jwtVerifyStub.returns(decodedToken);
+
+            queryStub.resolves([
+                [{
+                    message: 'Hello World',
+                    player_id: '1',
+                    username: 'Yuri'
+                }]
+            ]);
+
+            const resp = await chai.request(app).post(ROUTE.replace(':stashId', '1')).set('Authorization', `Bearer ${mockToken}`).send();
+
+            expect(resp.status).to.equal(400);
+            expect(resp.body).to.include(mockResponse);
+        });
     });
 
     context('should delete and stash a secret message', () => {
