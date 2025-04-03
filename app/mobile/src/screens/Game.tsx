@@ -1,19 +1,15 @@
 import React, { useEffect } from 'react';
-import { View, Text, Button, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useUserProfile } from '../store/context/UserProfileContext';
 import { RootStackParamList } from '../App';
+import MapView, { Marker } from 'react-native-maps';
 
 type GameProps = NativeStackScreenProps<RootStackParamList, 'Game'>;
 
 const Game: React.FC<GameProps> = ({ navigation }) => {
   const { profile, isLoading } = useUserProfile();
-
-  const handleLogout = async () => {
-    await AsyncStorage.removeItem('Authorization');
-    navigation.replace('Login');
-  };
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -28,7 +24,7 @@ const Game: React.FC<GameProps> = ({ navigation }) => {
 
   if (isLoading) {
     return (
-      <View style={styles.container}>
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#0000ff" />
         <Text>Loading profile...</Text>
       </View>
@@ -41,29 +37,33 @@ const Game: React.FC<GameProps> = ({ navigation }) => {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Welcome, {profile.username}!</Text>
-      <Text>ID: {profile.profile_id}</Text>
-      <Text>Email: {profile.email}</Text>
-      <Text>Google ID: {profile.google_id || 'Not linked'}</Text>
-      <Text>Google Email: {profile.google_email || 'Not linked'}</Text>
-      <Text>Score: {profile.score}</Text>
-      <Button title="Logout" onPress={handleLogout} />
-    </View>
+    <MapView
+      style={styles.map}
+      initialRegion={{
+        latitude: 37.78825,
+        longitude: -122.4324,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      }}
+    >
+      {/* Example Marker */}
+      <Marker
+        coordinate={{ latitude: 37.78825, longitude: -122.4324 }}
+        title="Example Location"
+        description="This is a marker description"
+      />
+    </MapView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
+  map: {
+    flex: 1,
   },
 });
 

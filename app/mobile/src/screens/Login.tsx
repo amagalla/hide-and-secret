@@ -33,7 +33,7 @@ const Login = ({ navigation }: LoginProps): React.JSX.Element => {
         navigation.replace('Username', { profile_id: data.profile_id });
       } else {
         await AsyncStorage.setItem('Authorization', resp.data.token);
-        navigation.navigate('Game');
+        navigation.replace('Game');
       }
     } catch (err: unknown) {
       if (err instanceof Error) {
