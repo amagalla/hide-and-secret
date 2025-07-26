@@ -9,14 +9,14 @@
   "scripts": {
     "dev": "concurrently \"nodemon -L app/server/index.ts\" \"npm --prefix app/client run dev\"",
     "build": "npm --prefix app/client run build && npm --prefix app/server run build",
-    "serve": "npm i && docker-compose up",
+    "serve": "npm i && docker compose up",
     "android": "cd app/mobile && npm i && npx react-native run-android",
     "ios": "cd app/mobile && npm i && cd ios && pod install && cd .. && npx react-native run-ios",
     "mysql": "docker exec -it mysql mysql -u hide -p",
     "docker-test": "mocha --require ts-node/register ${TEST_PATH} --exit",
-    "test": "npm i && docker-compose -f docker-compose.test.yml run --rm test-server",
+    "test": "npm i && docker compose -f docker compose.test.yml run --rm test-server",
     "delete-build": "rm -rf app/client/dist && rm -rf app/server/dist",
-    "docker-rebuild": "docker system prune -af && docker-compose build --no-cache && docker-compose up"
+    "docker-rebuild": "docker system prune -af && docker compose build --no-cache && docker compose up"
   },
   "keywords": [],
   "author": "",
